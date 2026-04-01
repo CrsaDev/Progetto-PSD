@@ -26,7 +26,7 @@ int list_delete_id(list l, int id);
 void list_print(list l);
 
 // Returns a specified report from the list
-report* list_search_by_id(list l,int id);
+report list_search_by_id(list l,int id);
 
 // Prints the reports of a selected category
 void list_print_by_category(list l, category c);

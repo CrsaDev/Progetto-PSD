@@ -32,6 +32,8 @@ int main() {
     list_print_by_category(my_list, STREET);
 
     printf("\nChiusura sistema e pulizia memoria...\n");
+
+    list_delete_id(my_list,102);
     
     list_destroy(my_list);
 
