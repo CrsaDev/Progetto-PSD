@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "date.h"
 
+//Move date validation into date creation -- TODO
+
 struct date {
     int day;
     int month;

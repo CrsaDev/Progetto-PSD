@@ -84,7 +84,6 @@ int report_status(report r) {
 // Sets the status of a given report
 void report_set_status(report r,status s) {
     if(!r)  return;
-
     r->stat = s;
 }
 

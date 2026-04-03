@@ -16,11 +16,11 @@ struct list {
 
 /* --- Memory Management --- */
 
-static struct list_node* list_node_create(report r) {
+static struct list_node* list_node_create() {
     struct list_node* n = malloc(sizeof(*n));
     if (n == NULL) return NULL;
 
-    n->item = r;
+    n->item = NULL;
     n->next = NULL;
     return n;
 }
@@ -38,7 +38,7 @@ list list_create() {
 
 // Frees the memory allocated for the given list
 void list_destroy(list l) {
-    if(list_is_empty(l)) {
+    if(l == NULL) {
         return;
     }
 
@@ -63,10 +63,11 @@ int list_is_empty(list l) {
 
 // Pushes a report to the head of the list
 int list_add(list l, report r) {
-    struct list_node *node = list_node_create(r);
+    struct list_node *node = list_node_create();
     if(node == NULL) {
         return 0;
     }
+    node->item = r;
 
     node->next = l->head;
     l->head = node;
@@ -74,6 +75,7 @@ int list_add(list l, report r) {
 
     return 1;
 }
+
 
 // Deletes a specified report from the list
 int list_delete_id(list l, int id) {
