@@ -3,7 +3,7 @@
 #include <string.h>
 #include "report.h"
 
-struct report{
+struct c_report{
     int id;
     char citizen[50];
     category cat;
@@ -13,13 +13,14 @@ struct report{
     status stat;
 };
 
-/* --- Memory Management --- */
-
+/* -------------------------------------------------------------------------
+   MEMORY MANAGEMENT
+   ------------------------------------------------------------------------- */
 
 report report_create(int id, char* citizen, category c, char* description, date d, priority p , status s) {
     report r = malloc(sizeof(*r));
 
-    // Destroys the date so there's no useless memory allocation
+    // Destroys the date to prevent the date from wasting memory since date is specifically related to the report
     if(r == NULL) {
         date_destroy(d);
         return NULL;
@@ -41,10 +42,9 @@ report report_create(int id, char* citizen, category c, char* description, date 
     return r;
 }
 
-// Frees the memory allocated for the given report
 void report_destroy(report r) {
     if(r) {
-        date_destroy(r->d);
+        date_destroy(r->d); // Destroys the date since each report will have a separate date
         free(r);
     }
 }
@@ -79,27 +79,56 @@ int report_status(report r) {
     return (r) ? r->stat : -1;
 }
 
-/* --- Setters --- */
+/* -------------------------------------------------------------------------
+   SETTERS
+   ------------------------------------------------------------------------- */
 
-// Sets the status of a given report
 void report_set_status(report r,status s) {
     if(!r)  return;
     r->stat = s;
 }
 
-/* --- Utils --- */
+/* -------------------------------------------------------------------------
+   OUTPUT & UTILITIES
+   ------------------------------------------------------------------------- */
 
-void report_to_string(report r) {
+void report_formatted(report r) {
     if (!r) return;
 
     printf("%d\t%s\t%s\t%s\t", r->id, r->citizen,
            category_to_string(r->cat), r->description);
 
-    date_print(r->d);  // stampa DD/MM/YYYY
+    date_print(r->d);  // prints in DD/MM/YYYY format
     printf("\t%s\t%s\n", status_to_string(r->stat), priority_to_string(r->prio));
 }
 
-/* --- Enums helpers --- */
+char* report_file_string(report r) {
+    if (!r) return NULL;
+    
+    // Checks the size to allocate for the string
+    int record_size = snprintf(NULL,0, "%d %s %d %s %02d/%02d/%d %d %d", 
+        r->id, r->citizen,r->cat, r->description,
+        date_day(r->d), date_month(r->d), date_year(r->d),
+        r->prio, r->stat
+    );
+
+    if(record_size < 0) return NULL;
+
+    // Allocates the string
+    char *s = malloc((record_size+1) * sizeof(char));
+    if(!s) return NULL;
+    sprintf(s, "%d %s %d %s %02d/%02d/%d %d %d", 
+        r->id, r->citizen, r->cat, r->description,
+        date_day(r->d), date_month(r->d), date_year(r->d),
+        r->prio, r->stat
+    );
+
+    return s;
+}
+
+/* -------------------------------------------------------------------------
+   ENUM HELPERS
+   ------------------------------------------------------------------------- */
 
 char* status_to_string(status s) {
     switch(s) {
