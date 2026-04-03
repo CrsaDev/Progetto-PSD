@@ -62,6 +62,8 @@ void list_destroy(list l) {
 int list_add(list l, report r) {
     if(!l || !r) return 0; // Checks if wheter the list or the report exist
 
+    if(list_has_report(l,report_id(r))) return 0; // The report is already in the list
+
     struct list_node *node = list_node_create();
     if(node == NULL) return 0;
     
@@ -126,6 +128,19 @@ int list_is_empty(list l) {
     return l == NULL || l->head == NULL;
 }
 
+int list_has_report(list l,int id) {
+    if(list_is_empty(l)) return 0;
+
+    struct list_node * curr = l->head;
+
+    while(curr != NULL) {
+        if(report_id(curr->item) == id) return 1;
+        curr = curr->next;
+    }
+
+    return 0; // The item is not in the list
+}
+
 /* 
     Returns the count of the reports of a specified field.
     -'c': Category
@@ -176,18 +191,25 @@ list list_reversed(list l) {
     if (l == NULL) return NULL;
 
     list reversed_l = list_create();
+    if (reversed_l == NULL) return NULL; 
+
     struct list_node *curr = l->head;
 
-    /* Sfrutta list_add (head insertion) per invertire l'ordine naturalmente */
     while (curr != NULL) {
-        list_add(reversed_l, curr->item); 
+        report cloned_report = report_copy(curr->item);
+        
+        if (cloned_report != NULL) {
+            list_add(reversed_l, cloned_report); 
+        }
+        
         curr = curr->next;
     }
+    
     return reversed_l;
 }
 
 /* -------------------------------------------------------------------------
-   QUERY & UTILITIES
+   OUTPUT
    ------------------------------------------------------------------------- */
 
 void list_print_by_category(list l, category c) {

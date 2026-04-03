@@ -21,6 +21,9 @@ void list_destroy(list l);
 /* Returns 1 if list doesn't have elements, 0 if yes */
 int list_is_empty(list l);
 
+/* Returns 1 if list has the report, else 0 */
+int list_has_report(list l,int id);
+
 /* Compares two lists and returns 1 if the elements are the same in the same order */
 int list_compare(list l1, list l2);
 

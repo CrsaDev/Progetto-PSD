@@ -65,6 +65,8 @@ int report_status(report r);
 void report_set_status(report r,status s);
 
 /* --- Utils --- */
+/* Creates a copy of the report giving a pointer to the new report - USEFUL FOR TESTING AND LIST CLONES */
+report report_copy(report r);
 
 /* Returns the id of a given report */
 void report_formatted(report r);

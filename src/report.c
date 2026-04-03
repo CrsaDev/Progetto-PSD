@@ -92,6 +92,34 @@ void report_set_status(report r,status s) {
    OUTPUT & UTILITIES
    ------------------------------------------------------------------------- */
 
+report report_copy(report r) {
+    if (r == NULL) return NULL;
+
+    date original_date = report_date(r);
+    date new_date = date_create(
+        date_day(original_date), 
+        date_month(original_date), 
+        date_year(original_date)
+    );
+
+    report copy = report_create(
+        report_id(r),
+        report_citizen(r), 
+        report_category(r),
+        report_description(r), 
+        new_date,
+        report_priority(r),
+        report_status(r)
+    );
+
+    if (copy == NULL) {
+        date_destroy(new_date);
+        return NULL;
+    }
+
+    return copy;
+}
+
 void report_formatted(report r) {
     if (!r) return;
 
