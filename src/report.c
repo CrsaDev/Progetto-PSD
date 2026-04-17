@@ -9,7 +9,7 @@ struct c_report{
     category cat;
     char description[100];
     date d;
-    priority prio;
+    int prio;
     status stat;
 };
 
@@ -17,7 +17,7 @@ struct c_report{
    MEMORY MANAGEMENT
    ------------------------------------------------------------------------- */
 
-report report_create(int id, char* citizen, category c, char* description, date d, priority p , status s) {
+report report_create(int id, char* citizen, category c, char* description, date d, int p , status s) {
     report r = malloc(sizeof(*r));
 
     // Destroys the date to prevent the date from wasting memory since date is specifically related to the report
@@ -127,7 +127,7 @@ void report_formatted(report r) {
            category_to_string(r->cat), r->description);
 
     date_print(r->d);  // prints in DD/MM/YYYY format
-    printf("\t%s\t%s\n", status_to_string(r->stat), priority_to_string(r->prio));
+    printf("\t%s\tPriority:%d\n", status_to_string(r->stat), r->prio);
 }
 
 char* report_file_string(report r) {
@@ -163,7 +163,6 @@ char* status_to_string(status s) {
         case PENDING: return "Pending";
         case IN_PROGRESS: return "In Progress";
         case RESOLVED: return "Resolved";
-        case CLOSED: return "Closed";
         default: return "Unknown";
     }
 }
@@ -174,17 +173,6 @@ char* category_to_string(category c) {
         case STREET: return "Pothole";
         case WASTE: return "Illegal Waste";
         case FAULT: return "Public Facility Fault";
-        default: return "Unknown";
-    }
-}
-
-char* priority_to_string(priority p) {
-    switch(p) {
-        case LOW: return "Low";
-        case MEDIUM: return "Medium";
-        case HIGH: return "High";
-        case URGENT: return "Urgent";
-        case CRITICAL: return "Critical";
         default: return "Unknown";
     }
 }

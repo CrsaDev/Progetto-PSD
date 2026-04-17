@@ -13,17 +13,8 @@ typedef enum {
 typedef enum {
     PENDING,
     IN_PROGRESS,
-    RESOLVED,
-    CLOSED
+    RESOLVED
 } status;
-
-typedef enum {
-    LOW,
-    MEDIUM,
-    HIGH,
-    URGENT,
-    CRITICAL
-} priority;
 
 /* Hidden type for report management */
 typedef struct c_report *report;
@@ -31,7 +22,7 @@ typedef struct c_report *report;
 /* --- Memory Management --- */
 
 /* Allocates a new report. Returns NULL in case of fail */
-report report_create(int id, char* citizen, category c, char* description, date d, priority p , status s);
+report report_create(int id, char* citizen, category c, char* description, date d, int p , status s);
 
 /* Deallocates a given report */
 void report_destroy(report r);
@@ -79,8 +70,6 @@ char* report_file_string(report r);
 char* category_to_string(category c);
 
 char* status_to_string(status s);
-
-char* priority_to_string(priority p);
 
 
 

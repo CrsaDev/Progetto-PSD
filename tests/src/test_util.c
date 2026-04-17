@@ -19,7 +19,7 @@ void finput_list(char *fname, list l, int hop) {
                   &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
         
         date dt = date_create(day, month, year);
-        report r = report_create(id, citizen, (category)cat, desc, dt, (priority)prio, (status)stat);
+        report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
         
         if (r != NULL) {
             list_add(l, r);

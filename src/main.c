@@ -14,9 +14,9 @@ int main() {
     date d3 = date_create(1, 11, 2023);
 
     // Creazione dei report
-    report r1 = report_create(101, "Mario Rossi", STREET, "Buca profonda in Via Roma", d1, HIGH, PENDING);
-    report r2 = report_create(102, "Luigi Verdi", LIGHTNING, "Lampione spento in Piazza", d2, LOW, IN_PROGRESS);
-    report r3 = report_create(103, "Giulia Bianchi", STREET, "Asfalto rovinato", d3, MEDIUM, PENDING);
+    report r1 = report_create(101, "Mario Rossi", STREET, "Buca profonda in Via Roma", d1, 32, PENDING);
+    report r2 = report_create(102, "Luigi Verdi", LIGHTNING, "Lampione spento in Piazza", d2, 12, IN_PROGRESS);
+    report r3 = report_create(103, "Giulia Bianchi", STREET, "Asfalto rovinato", d3, 1, PENDING);
 
     list my_list = list_create();
     
