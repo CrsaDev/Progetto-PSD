@@ -31,6 +31,9 @@ int main() {
     printf("\n--- Filtraggio: Solo problemi stradali (STREET) ---\n");
     list_print_by_category(my_list, STREET);
 
+    report tmp = list_has_report(my_list,101);
+    printf("\n %s \n",report_citizen(tmp));
+
     printf("\nChiusura sistema e pulizia memoria...\n");
 
     list_delete_id(my_list,102);

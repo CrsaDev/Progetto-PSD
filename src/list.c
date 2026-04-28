@@ -128,17 +128,17 @@ int list_is_empty(list l) {
     return l == NULL || l->head == NULL;
 }
 
-int list_has_report(list l,int id) {
+report list_has_report(list l,int id) {
     if(list_is_empty(l)) return 0;
 
     struct list_node * curr = l->head;
 
     while(curr != NULL) {
-        if(report_id(curr->item) == id) return 1;
+        if(report_id(curr->item) == id) return curr->item;
         curr = curr->next;
     }
 
-    return 0; // The item is not in the list
+    return NULL; // The item is not in the list
 }
 
 /* 

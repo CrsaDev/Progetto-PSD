@@ -21,8 +21,8 @@ void list_destroy(list l);
 /* Returns 1 if list doesn't have elements, 0 if yes */
 int list_is_empty(list l);
 
-/* Returns 1 if list has the report, else 0 */
-int list_has_report(list l,int id);
+/* Returns the report if list has the report, else null */
+report list_has_report(list l,int id);
 
 /* Compares two lists and returns 1 if the elements are the same in the same order */
 int list_compare(list l1, list l2);
@@ -38,9 +38,6 @@ int list_report_field_count(list l, char field, int value);
 
 /* Returns an inverted copy of l leaving l untouched*/
 list list_reversed(list l);
-
-/* Search a report in the list by the given id. Returns the pointer to the report if found, NULL if not */
-report list_search_by_id(list l, int id);
 
 
 /* --- Operations --- */
