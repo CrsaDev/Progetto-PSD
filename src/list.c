@@ -56,7 +56,98 @@ void list_destroy(list l) {
 }
 
 /* -------------------------------------------------------------------------
-   OPERATIONS & MODIFIERS
+   QUERIES
+   ------------------------------------------------------------------------- */
+
+int list_is_empty(list l) {
+    return l == NULL || l->head == NULL;
+}
+
+report list_get_report(list l,int id) {
+    if(list_is_empty(l)) return 0;
+
+    struct list_node * curr = l->head;
+
+    while(curr != NULL) {
+        if(report_id(curr->item) == id) return curr->item;
+        curr = curr->next;
+    }
+
+    return NULL; // The item is not in the list
+}
+
+int list_compare(list l1, list l2) {
+    if(!l1 || !l2) return -1;
+    if(l1->size != l2->size) return 0;
+
+    struct list_node *c1 = l1->head;
+    struct list_node *c2 = l2->head;
+
+    while(c1 != NULL) {
+        if(report_id(c1->item) != report_id(c2->item)) return 0;
+        c1 = c1->next;
+        c2 = c2->next;
+    }
+    return 1;
+}
+
+/* 
+    Returns the count of the reports of a specified field.
+    -'c': Category
+    -'s': Status
+    -'p': Priority
+*/
+int list_report_field_count(list l, char field, int value) {
+    if (list_is_empty(l)) return 0;
+
+    int count = 0;
+    struct list_node *curr = l->head;
+
+    while (curr != NULL) {
+        switch (field) {
+            case 'c':
+                if ((int)report_category(curr->item) == value) count++;
+                break;
+            case 's':
+                if ((int)report_status(curr->item) == value) count++;
+                break;
+            case 'p':
+                if ((int)report_priority(curr->item) == value) count++;
+                break;
+            default:
+                return -1; // Invalid field
+        }
+        curr = curr->next;
+    }
+    return count;
+}
+
+/* Only for testing purposes */
+list list_reversed(list l) {
+    if (l == NULL) return NULL;
+
+    /* Creates a new list, and copies all the data in the list traversing the main one in order to reverse it. */
+
+    list reversed_l = list_create();
+    if (reversed_l == NULL) return NULL; 
+
+    struct list_node *curr = l->head;
+
+    while (curr != NULL) {
+        report cloned_report = report_copy(curr->item);
+        
+        if (cloned_report != NULL) {
+            list_add(reversed_l, cloned_report); 
+        }
+        
+        curr = curr->next;
+    }
+    
+    return reversed_l;
+}
+
+/* -------------------------------------------------------------------------
+   QUERY & UTILITIES
    ------------------------------------------------------------------------- */
 
 int list_add(list l, report r) {
@@ -121,94 +212,6 @@ report list_remove_head(list l) {
 }
 
 /* -------------------------------------------------------------------------
-   QUERY & UTILITIES
-   ------------------------------------------------------------------------- */
-
-int list_is_empty(list l) {
-    return l == NULL || l->head == NULL;
-}
-
-report list_get_report(list l,int id) {
-    if(list_is_empty(l)) return 0;
-
-    struct list_node * curr = l->head;
-
-    while(curr != NULL) {
-        if(report_id(curr->item) == id) return curr->item;
-        curr = curr->next;
-    }
-
-    return NULL; // The item is not in the list
-}
-
-/* 
-    Returns the count of the reports of a specified field.
-    -'c': Category
-    -'s': Status
-    -'p': Priority
-*/
-int list_report_field_count(list l, char field, int value) {
-    if (list_is_empty(l)) return 0;
-
-    int count = 0;
-    struct list_node *curr = l->head;
-
-    while (curr != NULL) {
-        switch (field) {
-            case 'c':
-                if ((int)report_category(curr->item) == value) count++;
-                break;
-            case 's':
-                if ((int)report_status(curr->item) == value) count++;
-                break;
-            case 'p':
-                if ((int)report_priority(curr->item) == value) count++;
-                break;
-            default:
-                return -1; // Invalid field
-        }
-        curr = curr->next;
-    }
-    return count;
-}
-
-int list_compare(list l1, list l2) {
-    if(!l1 || !l2) return -1;
-    if(l1->size != l2->size) return 0;
-
-    struct list_node *c1 = l1->head;
-    struct list_node *c2 = l2->head;
-
-    while(c1 != NULL) {
-        if(report_id(c1->item) != report_id(c2->item)) return 0;
-        c1 = c1->next;
-        c2 = c2->next;
-    }
-    return 1;
-}
-
-list list_reversed(list l) {
-    if (l == NULL) return NULL;
-
-    list reversed_l = list_create();
-    if (reversed_l == NULL) return NULL; 
-
-    struct list_node *curr = l->head;
-
-    while (curr != NULL) {
-        report cloned_report = report_copy(curr->item);
-        
-        if (cloned_report != NULL) {
-            list_add(reversed_l, cloned_report); 
-        }
-        
-        curr = curr->next;
-    }
-    
-    return reversed_l;
-}
-
-/* -------------------------------------------------------------------------
    OUTPUT
    ------------------------------------------------------------------------- */
 
@@ -237,7 +240,6 @@ void list_print_by_category(list l, category c) {
 
 }
 
-/* Function dedicated to printing the report into the file */
 void list_print_file(list l, FILE *stream) {
     if(list_is_empty(l)) {
         printf("The list is empty!");
@@ -271,5 +273,30 @@ void list_print_formatted(list l) {
         report_formatted(curr->item);
         printf("\n");
         curr = curr->next;
+    }
+}
+
+void list_print_filtered(list l, int cat, int stat) {
+    if (list_is_empty(l)) {
+        printf("Nessun report presente nel database.\n");
+        return;
+    }
+
+    struct list_node *current = l->head; 
+    int found = 0;
+
+    while (current != NULL) {
+        int match_cat = (cat == -1 || report_category(current->item) == cat);
+        int match_stat = (stat == -1 || report_status(current->item) == stat);
+
+        if (match_cat && match_stat) {
+            report_formatted(current->item);
+            found++;
+        }
+        current = current->next;
+    }
+
+    if (found == 0) {
+        printf("Nessun report corrisponde ai criteri di ricerca.\n");
     }
 }

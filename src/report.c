@@ -171,10 +171,10 @@ char* status_to_string(status s) {
 
 char* category_to_string(category c) {
     switch(c) {
-        case LIGHTNING: return "Streetlight Issue";
-        case STREET: return "Pothole";
-        case WASTE: return "Illegal Waste";
-        case FAULT: return "Public Facility Fault";
+        case LIGHTNING: return "Illuminazione";
+        case STREET: return "Strade/Buche";
+        case WASTE: return "Rifiuti";
+        case FAULT: return "Guasti generici";
         default: return "Unknown";
     }
 }

@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "report.h"
 
-/* Hidden type for list management */
 typedef struct c_list *list;
 
 /* --- Memory management --- */
@@ -35,7 +34,6 @@ int list_compare(list l1, list l2);
 */
 int list_report_field_count(list l, char field, int value);
 
-
 /* Returns an inverted copy of l leaving l untouched*/
 list list_reversed(list l);
 
@@ -57,10 +55,10 @@ report list_remove_head(list l);
 /* Prints the whole formatted list. */
 void list_print_formatted(list l);
 
-/* Writes the Scrive la lista su uno stream (file o stdout) usando il formato specificato. */
+/* Writes the list on a file using the default format. */
 void list_print_file(list l, FILE *stream);
 
-/* Prints the formatted list filtering it by category */
-void list_print_by_category(list l, category c);
+/* Prints the formatted list filtering it by category and status */
+void list_print_filtered(list l, int cat, int stat);
 
 #endif

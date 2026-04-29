@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "date.h"
 
-//Move date validation into date creation -- TODO
-
 struct date {
     int day;
     int month;
@@ -13,9 +11,18 @@ struct date {
 /* --- Memory Management --- */
 
 date date_create(int day, int month, int year) {
+    if (year < 2000 || month < 1 || month > 12 || day < 1) return NULL;
+
+    int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    // Bisestile year
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        days_in_month[2] = 29;
+    }
+
+    if (day > days_in_month[month]) return NULL;
+
     date d = malloc(sizeof(*d));
-    
-    // Returns null in case of unsuccesful memory allocation
     if(d == NULL) return NULL;
 
     d->day = day;
@@ -58,18 +65,6 @@ void date_print(date d) {
     printf("%02d/%02d/%04d",d->day,d->month,d->year);
 }
 
-// Validates the inserted date
 int date_is_valid(date d) {
-    if (!d) return 0;
-
-    if (d->year < 2000 || d->month < 1 || d->month > 12 || d->day < 1) return 0;
-
-    int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-    // Checks for a leap year
-    if ((d->year % 4 == 0 && d->year % 100 != 0) || (d->year % 400 == 0)) {
-        days_in_month[2] = 29;
-    }
-
-    return d->day <= days_in_month[d->month];
+    return (d != NULL);
 }

@@ -14,7 +14,6 @@ pQueue pQueue_create(void);
 /* Deallocates the whole priority queue, the nodes and the internal reports will stay intact in memory */
 void pQueue_destroy(pQueue q);
 
-
 /* --- Queries --- */
 
 /* Returns 1 if queue doesn't have elements, 0 if yes */

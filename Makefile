@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -g -Iinclude -Itests/include
 
 # .c files, necessary for compiling (Logica ADT)
-COMMON_SRCS = src/date.c src/report.c src/list.c src/p_queue.c
+COMMON_SRCS = src/date.c src/report.c src/list.c src/p_queue.c src/gestionale.c
 
 # --- Main program ---
 MAIN_SRCS = src/main.c
