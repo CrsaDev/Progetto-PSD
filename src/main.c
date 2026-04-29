@@ -154,7 +154,7 @@ int main() {
                 printf("Nome Cittadino: "); 
                 scanf(" %[^\n]s", citizen); 
 
-                printf("Categoria (0:STREET, 1:LIGHTNING, 2:WASTE, 3:FAULT): ");
+                printf("Categoria (0:STRADE, 1:ILLUMINAZIONE, 2:RIFIUTI, 3:MALFUNZIONAMENTI): ");
                 if (scanf("%d", &cat_int) != 1 || cat_int < 0 || cat_int > 3) {
                     printf("\nErrore: Categoria non valida. Deve essere un numero tra 0 e 3.\n");
                     printf("Inserimento annullato.\n");
@@ -223,6 +223,5 @@ int main() {
     } while (choice != 0);
 
     gestionale_destroy(g);
-    printf("Memoria liberata. Arrivederci!\n");
     return 0;
 }
