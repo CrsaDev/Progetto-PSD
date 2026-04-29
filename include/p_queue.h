@@ -29,7 +29,5 @@ int pQueue_delete_max(pQueue q);
 /* Inserts a report in the priority queue with 1 indicating succes, 0 failure */
 int pQueue_insert(pQueue q, report r);
 
-/* Prints the priority queue*/
-void pQueue_print(pQueue q);
 
 #endif

@@ -62,7 +62,7 @@ void list_destroy(list l) {
 int list_add(list l, report r) {
     if(!l || !r) return 0; // Checks if wheter the list or the report exist
 
-    if(list_has_report(l,report_id(r))) return 0; // The report is already in the list
+    if(list_get_report(l,report_id(r))) return 0; // The report is already in the list
 
     struct list_node *node = list_node_create();
     if(node == NULL) return 0;
@@ -128,7 +128,7 @@ int list_is_empty(list l) {
     return l == NULL || l->head == NULL;
 }
 
-report list_has_report(list l,int id) {
+report list_get_report(list l,int id) {
     if(list_is_empty(l)) return 0;
 
     struct list_node * curr = l->head;

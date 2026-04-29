@@ -1,30 +1,29 @@
 CC = gcc
-# Aggiungiamo -Itests/include per permettere a test_suite.c di trovare test_util.h
+# Adding -Itests/include so test_suite.c can find test_util.h
 CFLAGS = -Wall -g -Iinclude -Itests/include
 
-# File comuni necessari (Logica ADT)
-COMMON_SRCS = src/date.c src/report.c src/list.c
+# .c files, necessary for compiling (Logica ADT)
+COMMON_SRCS = src/date.c src/report.c src/list.c src/p_queue.c
 
-# --- Programma Principale ---
+# --- Main program ---
 MAIN_SRCS = src/main.c
 TARGET = gestione_report
 
-# --- Programma dei Test ---
-# Nota: i percorsi riflettono la tua nuova struttura tests/src/
+# --- Test program ---
 TEST_SRCS = tests/src/test_suite.c tests/src/test_util.c
 TEST_TARGET = run_tests
 
-# Regola di default: compila entrambi
+# default rule: compile both test and main program
 all: $(TARGET) $(TEST_TARGET)
 
-# Compilazione Programma Principale
+# Compiling main program
 $(TARGET): $(COMMON_SRCS) $(MAIN_SRCS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(COMMON_SRCS) $(MAIN_SRCS)
 
-# Compilazione Suite di Test
+# Compiling the test suite
 $(TEST_TARGET): $(COMMON_SRCS) $(TEST_SRCS)
 	$(CC) $(CFLAGS) -o $(TEST_TARGET) $(COMMON_SRCS) $(TEST_SRCS)
 
-# Pulizia (Compatibile con Windows se usi Git Bash/MinGW, altrimenti usa 'del')
+# Clean
 clean:
 	rm -f $(TARGET).exe $(TEST_TARGET).exe tests/*_output.txt

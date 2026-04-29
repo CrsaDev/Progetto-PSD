@@ -22,7 +22,7 @@ void list_destroy(list l);
 int list_is_empty(list l);
 
 /* Returns the report if list has the report, else null */
-report list_has_report(list l,int id);
+report list_get_report(list l,int id);
 
 /* Compares two lists and returns 1 if the elements are the same in the same order */
 int list_compare(list l1, list l2);
