@@ -24,9 +24,6 @@ int date_year(date d);
 
 /* --- Utilities & Comparison --- */
 
-// Converts the date to a YYYYMMDD long value for easy comparisons
-long date_to_long(date d);
-
 // Prints the date in DD/MM/YYYY format
 void date_print(date d);
 
