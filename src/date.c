@@ -53,6 +53,12 @@ int date_year(date d) {
 
 /* --- Utilities & Comparison --- */
 
+long date_to_long(date d) {
+    if(!d) return -1;
+
+    return (long)d->year*10000 + (long)d->month*100 + d->day;
+}
+
 void date_print(date d) {
     if(!d) return;
 

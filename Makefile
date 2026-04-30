@@ -2,7 +2,7 @@ CC = gcc
 # Adding -Itests/include so test_suite.c can find test_util.h
 CFLAGS = -Wall -g -Iinclude -Itests/include
 
-# .c files, necessary for compiling (Logica ADT)
+# .c files, necessary for compiling 
 COMMON_SRCS = src/date.c src/report.c src/list.c src/p_queue.c src/gestionale.c tests/src/test_util.c
 
 # --- Main program ---
