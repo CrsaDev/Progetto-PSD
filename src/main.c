@@ -7,6 +7,11 @@
 
 void print_menu() {
     printf("=========================================\n");
+    printf("     PER SALVARE I DATI SCEGLIERE 0    \n");
+    printf("=========================================\n");
+
+
+    printf("=========================================\n");
     printf("       SISTEMA GESTIONE SEGNALAZIONI       \n");
     printf("=========================================\n");
     printf("1. Visualizza tutte le segnalazioni\n");
@@ -15,7 +20,7 @@ void print_menu() {
     printf("4. Aggiorna stato di una segnalazione\n");
     printf("5. Visualizza Dashboard Statistiche\n");
     printf("6. Inserisci NUOVA segnalazione\n");
-    printf("0. Esci dal programma\n");
+    printf("0. Salva ed esci dal programma\n");
     printf("=========================================\n");
     printf("Scelta: ");
 }
@@ -36,11 +41,6 @@ int main() {
         return -1;
     }
 
-    // Dummy values
-    date d1 = date_create(15, 10, 2023);
-    report r1 = report_create(101, "Mario Rossi", STREET, "Buca in Via Roma", d1, 32, PENDING);
-    gestionale_add_report(g, r1);
-
     int choice;
     do {
         print_menu();
@@ -59,10 +59,10 @@ int main() {
                 
                 printf("Seleziona la Categoria:\n");
                 printf("0: Tutte le categorie\n");
-                printf("1: Solo STREET (Strade/Buche)\n");
-                printf("2: Solo LIGHTNING (Illuminazione)\n");
-                printf("3: Solo WASTE (Rifiuti)\n");
-                printf("4: Solo FAULT (Guasti generici)\n");
+                printf("1: Solo (Strade/Buche)\n");
+                printf("2: Solo (Illuminazione)\n");
+                printf("3: Solo (Rifiuti)\n");
+                printf("4: Solo (Guasti generici)\n");
                 printf("Scelta: ");
 
                 if (scanf("%d", &filter_choice_cat) != 1 || filter_choice_cat < 0 || filter_choice_cat > 4) {

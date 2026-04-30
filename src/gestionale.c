@@ -1,4 +1,6 @@
 #include "gestionale.h"
+#include "test_util.h"
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -6,6 +8,55 @@ struct c_gestionale {
     list gestionale_list;
     pQueue gestionale_pQueue;
 };
+
+int gestionale_load_database(char *fname, gestionale g) {
+    if (g == NULL) return 0;
+
+    FILE *f = fopen(fname, "r");
+    if (f == NULL) return 1; // DB file does not exist, not an error.
+
+    int id, day, month, year, cat, prio, stat;
+    char citizen[50], desc[100];
+    char line[256];
+
+    // fgets + sscanf for line reading
+    while (fgets(line, sizeof(line), f)) {
+        // Reading the report
+        if (sscanf(line, "%d %49s %d %99s %d/%d/%d %d %d", 
+                   &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
+            
+            date dt = date_create(day, month, year);
+            report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
+            
+            if (r != NULL) {
+                list_add(g->gestionale_list, r);
+                // Loading in the pQueue only if not resolved
+                if ((status)stat != RESOLVED) {
+                    pQueue_insert(g->gestionale_pQueue, r);
+                }
+            }
+        }
+    }
+
+    fclose(f);
+    list_reversed(g->gestionale_list); 
+    return 1;
+}
+
+int gestionale_save_database(char *fname, gestionale g) {
+    if (g == NULL || g->gestionale_list == NULL) return 0;
+    
+    int success = foutput_list(fname, g->gestionale_list);
+    
+    if (success) {
+        printf("Database salvato con successo su %s\n", fname);
+    } else {
+        printf("Errore durante il salvataggio del database!\n");
+    }
+
+    return success;
+}
+
 
 /* -------------------------------------------------------------------------
    MEMORY MANAGEMENT
@@ -18,7 +69,7 @@ gestionale gestionale_create() {
     g->gestionale_list = list_create();
     g->gestionale_pQueue = pQueue_create();
 
-    // If either the queue or the list fail the allocation, the gestionale fails its allocation too.
+    // Checks if they are both successfully allocated
     if (!g->gestionale_list || !g->gestionale_pQueue) {
         if (g->gestionale_list) list_destroy(g->gestionale_list);
         if (g->gestionale_pQueue) pQueue_destroy(g->gestionale_pQueue);
@@ -26,11 +77,21 @@ gestionale gestionale_create() {
         return NULL;
     }
 
+    // Loads up from the database
+    clock_t start = clock();
+    gestionale_load_database("db.txt", g);
+    clock_t end = clock();
+    double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("In: %.6f s\n", tempo_impiegato);
+
+
     return g;
 }
 
 void gestionale_destroy(gestionale g) {
     if (g) {
+        // Saves everything to the database.
+        gestionale_save_database("db.txt",g);
         list_destroy(g->gestionale_list);
         pQueue_destroy(g->gestionale_pQueue);
         free(g);
@@ -66,7 +127,7 @@ void gestionale_update_report_status(gestionale g, int report_id, status new_sta
     
     if (r) {
         if (report_status(r) == RESOLVED) {
-            printf("Errore: Il report #%d è già chiuso (RESOLVED) e non può essere riaperto o modificato.\n", report_id);
+            printf("Errore: Il report #%d risulta chiuso (RESOLVED) e non puo' essere riaperto o modificato.\n", report_id);
             return;
         }
 
@@ -85,13 +146,18 @@ void gestionale_update_report_status(gestionale g, int report_id, status new_sta
 void gestionale_find_report(gestionale g, int report_id) {
     if (!g) return;
 
+    // Clock for mesuring time to find the report
+    clock_t start = clock();
     report r = list_get_report(g->gestionale_list, report_id);
+    clock_t end = clock();
+    double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
     if (r) {
         printf("Trovato: ");
         report_formatted(r); 
     } else {
         printf("Report con ID %d inesistente.\n", report_id);
     }
+    printf("In: %.6fs\n", tempo_impiegato);
 }
 /* --- Queries --- */
 
@@ -101,7 +167,7 @@ void gestionale_view_urgent(gestionale g) {
     report urgent = pQueue_get_max(g->gestionale_pQueue);
     
     if (urgent) {
-        printf("=== SEGNALAZIONE PIÙ URGENTE ===\n");
+        printf("=== SEGNALAZIONE PIU' URGENTE ===\n");
         report_formatted(urgent);
     } else {
         printf("Nessuna segnalazione urgente in sospeso.\n");
@@ -110,23 +176,37 @@ void gestionale_view_urgent(gestionale g) {
 
 void gestionale_view_reports(gestionale g, int cat, int stat) {
     if (!g) return;
-    
+
     printf("\n--- ELENCO SEGNALAZIONI FILTRATE ---\n");
-    list_print_filtered(g->gestionale_list, cat, stat);
+    
+    list filtered = list_get_filtered(g->gestionale_list, cat, stat);
+    
+    if (list_is_empty(filtered)) {
+        printf("Nessun report corrisponde ai criteri di ricerca.\n");
+    } else {
+        list_print_formatted(filtered);
+    }
+    
+    list_destroy(filtered);
 }
 
 void gestionale_view_final_report(gestionale g) {
-    if (!g) return;
+    if (!g || !g->gestionale_list) return;
+
+    // Local variables to store counts
+    int pending = 0, in_progress = 0, resolved = 0;
+    int lightning = 0, street = 0, waste = 0, fault = 0;
+
+    // Gathring all stats
+    list_get_info_stats(g->gestionale_list, 
+                        &pending, &in_progress, &resolved, 
+                        &lightning, &street, &waste, &fault);
+
+    int total = pending + in_progress + resolved;
 
     printf("\n========================================\n");
-    printf("        DASHBOARD STATISTICHE           \n");
+    printf("         DASHBOARD STATISTICHE           \n");
     printf("========================================\n");
-
-    // We get the count for each category
-    int pending = list_report_field_count(g->gestionale_list, 's', PENDING);
-    int in_progress = list_report_field_count(g->gestionale_list, 's', IN_PROGRESS);
-    int resolved = list_report_field_count(g->gestionale_list, 's', RESOLVED);
-    int total = pending + in_progress + resolved;
 
     printf("--- STATO SEGNALAZIONI ---\n");
     printf("Totale Segnalazioni : %d\n", total);
@@ -135,10 +215,10 @@ void gestionale_view_final_report(gestionale g) {
     printf("Chiuse (RESOLVED)   : %d\n\n", resolved);
 
     printf("--- RIPARTIZIONE PER CATEGORIA ---\n");
-    printf("Lampioni (LIGHTNING): %d\n", list_report_field_count(g->gestionale_list, 'c', LIGHTNING));
-    printf("Strade (STREET)     : %d\n", list_report_field_count(g->gestionale_list, 'c', STREET));
-    printf("Rifiuti (WASTE)     : %d\n", list_report_field_count(g->gestionale_list, 'c', WASTE));
-    printf("Guasti (FAULT)      : %d\n", list_report_field_count(g->gestionale_list, 'c', FAULT));
+    printf("Lampioni (LIGHTNING): %d\n", lightning);
+    printf("Strade (STREET)     : %d\n", street);
+    printf("Rifiuti (WASTE)     : %d\n", waste);
+    printf("Guasti (FAULT)      : %d\n", fault);
     
     printf("========================================\n\n");
 }

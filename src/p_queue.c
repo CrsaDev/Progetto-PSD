@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define INITIAL 50
+#define INITIAL 6000
 
 typedef struct c_pQueue {
     report *queue;      
@@ -14,6 +14,7 @@ typedef struct c_pQueue {
    HELPER FUNCTIONS (STATIC)
    ------------------------------------------------------------------------- */
 
+// Quickly swaps two reports
 static void swap_reports(report *a, report *b) {
     report temp = *a;
     *a = *b;
@@ -174,11 +175,11 @@ int pQueue_insert(pQueue q, report r) {
         q->capacity = new_capacity;
     }
 
-    // Inserts the new element in the first available leaf node
+    // Inserts the new element in the first available leaf nodee
     q->num_el++;
     q->queue[q->num_el] = r;
 
-    // Reporders the heap.
+    // Reorders the heap.
     up(q, q->num_el); 
     
     return 1;

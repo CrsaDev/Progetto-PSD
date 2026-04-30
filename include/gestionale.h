@@ -36,4 +36,6 @@ void gestionale_view_urgent(gestionale g);
 /* Prints out a final sheet with important report details */
 void gestionale_view_final_report(gestionale g);
 
+
+
 #endif

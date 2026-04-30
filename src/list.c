@@ -48,7 +48,9 @@ void list_destroy(list l) {
         struct list_node *next_node = curr->next;
 
         /* Destructs the reports along with the nodes to avoid wasting memory */
-        report_destroy(curr->item);
+        if(curr->item != NULL) {
+            report_destroy(curr->item);
+        }
         free(curr);
         curr = next_node;
     }
@@ -84,66 +86,14 @@ int list_compare(list l1, list l2) {
     struct list_node *c2 = l2->head;
 
     while(c1 != NULL) {
-        if(report_id(c1->item) != report_id(c2->item)) return 0;
+        if (report_compare(c1->item, c2->item) == 0) {
+            return 0; 
+        }
         c1 = c1->next;
         c2 = c2->next;
     }
+
     return 1;
-}
-
-/* 
-    Returns the count of the reports of a specified field.
-    -'c': Category
-    -'s': Status
-    -'p': Priority
-*/
-int list_report_field_count(list l, char field, int value) {
-    if (list_is_empty(l)) return 0;
-
-    int count = 0;
-    struct list_node *curr = l->head;
-
-    while (curr != NULL) {
-        switch (field) {
-            case 'c':
-                if ((int)report_category(curr->item) == value) count++;
-                break;
-            case 's':
-                if ((int)report_status(curr->item) == value) count++;
-                break;
-            case 'p':
-                if ((int)report_priority(curr->item) == value) count++;
-                break;
-            default:
-                return -1; // Invalid field
-        }
-        curr = curr->next;
-    }
-    return count;
-}
-
-/* Only for testing purposes */
-list list_reversed(list l) {
-    if (l == NULL) return NULL;
-
-    /* Creates a new list, and copies all the data in the list traversing the main one in order to reverse it. */
-
-    list reversed_l = list_create();
-    if (reversed_l == NULL) return NULL; 
-
-    struct list_node *curr = l->head;
-
-    while (curr != NULL) {
-        report cloned_report = report_copy(curr->item);
-        
-        if (cloned_report != NULL) {
-            list_add(reversed_l, cloned_report); 
-        }
-        
-        curr = curr->next;
-    }
-    
-    return reversed_l;
 }
 
 /* -------------------------------------------------------------------------
@@ -168,35 +118,7 @@ int list_add(list l, report r) {
     return 1;
 }
 
-int list_delete_id(list l, int id) {
-    if(!l) return 0;
-
-    struct list_node *curr = l->head;
-    struct list_node *prev = NULL;
-
-    /* Searching for the node to delete keeping the previous node: O(n) */
-    while(curr != NULL && report_id(curr->item) != id) {
-        prev = curr;
-        curr = curr->next;
-    }
-
-    if(curr == NULL) return 0; // Not found
-
-    /* Removing in head case */
-    if(prev == NULL) {
-        l->head = curr->next;
-    } else {
-        prev->next = curr->next;
-    }
-
-    report_destroy(curr->item); // To avoid wasting memory
-    free(curr);
-    l->size--;
-
-    return 1;
-}
-
-report list_remove_head(list l) {
+report list_pop_head(list l) {
     if(list_is_empty(l)) return NULL;
 
     struct list_node *temp = l->head;
@@ -212,33 +134,96 @@ report list_remove_head(list l) {
 }
 
 /* -------------------------------------------------------------------------
-   OUTPUT
+   MOSTLY FOR TESTING 
    ------------------------------------------------------------------------- */
 
-void list_print_by_category(list l, category c) {
-    if(list_is_empty(l)) {
-        printf("The list is empty!");
-        return;
+void list_reversed(list l) {
+    // Safety check: if the list or the head is empty, nothing to reverse
+    if (l == NULL || l->head == NULL) return;
+
+    struct list_node *prev = NULL;    // Pointer to the previous node (starts at NULL)
+    struct list_node *curr = l->head; // Pointer to the node we are currently processing
+    struct list_node *next = NULL;    // Temporary pointer to store the next node
+
+    while (curr != NULL) {
+        // Store the next node (the rest of the list is not lost)
+        next = curr->next; 
+        
+        // Reverse the link (make the current node point backwards to 'prev')
+        curr->next = prev; 
+        
+        // Moves the pointers one step forward for the next iteration
+        prev = curr;     // 'curr' ise 'prev' for the next node
+        curr = next;     // Moves to next node for next iteration
     }
 
-    if(c<0 || c>4) {
-        printf("The selected category is not valid");
-        return;
-    }
+    // Update the list head to point to the new first node (which was the last) since in this case current now is NULL
+    l->head = prev;
+}
+
+list list_get_filtered(list l, int cat, int stat) {
+    if (l == NULL) return NULL;
+
+    list final_l = list_create();
+    if (final_l == NULL) return NULL;
 
     struct list_node *curr = l->head;
+    struct list_node *tail = NULL; // Keeping a pointer to the last node
 
-    while(curr != NULL) {
+    while (curr != NULL) {
+        int cat_match = (cat == -1 || (int)report_category(curr->item) == cat);
+        int stat_match = (stat == -1 || (int)report_status(curr->item) == stat);
 
-        if(report_category(curr->item) == c) {
-            report_formatted(curr->item);
-            printf("\n");
+        if (cat_match && stat_match) {
+            struct list_node *new_node = list_node_create();
+            if (new_node == NULL) break; 
+
+            // Cloning the report
+            new_node->item = report_copy(curr->item);
+            
+            if (final_l->head == NULL) {
+                // First element
+                final_l->head = new_node;
+            } else {
+                // Adding other elements after the tail
+                tail->next = new_node;
+            }
+            // Setting the tail to be the new node
+            tail = new_node;
+            final_l->size++;
         }
+        // Moving onto next elment
+        curr = curr->next;
+    }
+    
+    return final_l;
+}
+
+void list_get_info_stats(list l, int *pending, int *in_prog, int *res, int *light, int *street, int *waste, int *fault) {
+    if (l == NULL || l->head == NULL) return;
+
+    struct list_node *curr = l->head;
+    while (curr != NULL) {
+        // Counting states
+        status s = report_status(curr->item);
+        if (s == PENDING) (*pending)++;
+        else if (s == IN_PROGRESS) (*in_prog)++;
+        else if (s == RESOLVED) (*res)++;
+
+        // Counting categories
+        category c = report_category(curr->item);
+        if (c == LIGHTNING) (*light)++;
+        else if (c == STREET) (*street)++;
+        else if (c == WASTE) (*waste)++;
+        else if (c == FAULT) (*fault)++;
 
         curr = curr->next;
     }
-
 }
+
+/* -------------------------------------------------------------------------
+   OUTPUT
+   ------------------------------------------------------------------------- */
 
 void list_print_file(list l, FILE *stream) {
     if(list_is_empty(l)) {
@@ -282,18 +267,18 @@ void list_print_filtered(list l, int cat, int stat) {
         return;
     }
 
-    struct list_node *current = l->head; 
+    struct list_node *curr = l->head; 
     int found = 0;
 
-    while (current != NULL) {
-        int match_cat = (cat == -1 || report_category(current->item) == cat);
-        int match_stat = (stat == -1 || report_status(current->item) == stat);
+    while (curr != NULL) {
+        int match_cat = (cat == -1 || report_category(curr->item) == cat);
+        int match_stat = (stat == -1 || report_status(curr->item) == stat);
 
         if (match_cat && match_stat) {
-            report_formatted(current->item);
+            report_formatted(curr->item);
             found++;
         }
-        current = current->next;
+        curr = curr->next;
     }
 
     if (found == 0) {

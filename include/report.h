@@ -65,6 +65,9 @@ void report_formatted(report r);
 /* Returns the report formatted string to write into a file */
 char* report_file_string(report r);
 
+/* Checks if two reports are equal */
+int report_compare(report r1, report r2);
+
 /* --- Enums helpers --- */
 
 char* category_to_string(category c);

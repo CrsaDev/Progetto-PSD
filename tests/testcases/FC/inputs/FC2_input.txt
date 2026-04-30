@@ -1,0 +1,6 @@
+-1
+-1
+-------
+10 Luigi_Verdi 1 Lampione 01/01/2026 10 0
+20 Mario_Rossi 0 Buca_marciapiede 10/10/2026 50 1
+30 Anna_Bianchi 2 Rifiuti 12/12/2026 99 1

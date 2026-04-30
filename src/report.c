@@ -156,6 +156,24 @@ char* report_file_string(report r) {
     return s;
 }
 
+int report_compare(report r1, report r2) {
+    if (r1 == r2) return 1; 
+    
+    if (!r1 || !r2) return 0; 
+
+    if (r1->id != r2->id) return 0;
+    if (r1->prio != r2->prio) return 0;
+    if (r1->stat != r2->stat) return 0;
+    if (r1->cat != r2->cat) return 0;
+
+    if (strcmp(r1->citizen, r2->citizen) != 0) return 0;
+    if (strcmp(r1->description, r2->description) != 0) return 0;
+
+    if (date_to_long(r1->d) != date_to_long(r2->d)) return 0;
+
+    return 1;
+}
+
 /* -------------------------------------------------------------------------
    ENUM HELPERS
    ------------------------------------------------------------------------- */
