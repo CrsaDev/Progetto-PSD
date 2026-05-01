@@ -75,9 +75,9 @@ int foutput_list(char *fname, list l) {
 
 void get_test_filenames(const char *testcase_id, int n, char *in, char *out, char *oracle) {
     // Creates strings with specified formats.
-    sprintf(in, "tests/testcases/%s/inputs/%s%d_input.txt", testcase_id, testcase_id, n);
-    sprintf(out, "tests/testcases/%s/outputs/%s%d_output.txt", testcase_id, testcase_id, n);
-    sprintf(oracle, "tests/testcases/%s/oracles/%s%d_oracle.txt", testcase_id, testcase_id, n);
+    sprintf(in, "../tests/testcases/%s/inputs/%s%d_input.txt", testcase_id, testcase_id, n);
+    sprintf(out, "../tests/testcases/%s/outputs/%s%d_output.txt", testcase_id, testcase_id, n);
+    sprintf(oracle, "../tests/testcases/%s/oracles/%s%d_oracle.txt", testcase_id, testcase_id, n);
 }
 
 int read_int(const char *fname, int hop) {

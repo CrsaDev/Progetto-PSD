@@ -79,7 +79,7 @@ gestionale gestionale_create() {
 
     // Loads up from the database
     clock_t start = clock();
-    gestionale_load_database("db.txt", g);
+    gestionale_load_database("../db.txt", g);
     clock_t end = clock();
     double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
     printf("In: %.6f s\n", tempo_impiegato);
@@ -91,7 +91,7 @@ gestionale gestionale_create() {
 void gestionale_destroy(gestionale g) {
     if (g) {
         // Saves everything to the database.
-        gestionale_save_database("db.txt",g);
+        gestionale_save_database("../db.txt",g);
         list_destroy(g->gestionale_list);
         pQueue_destroy(g->gestionale_pQueue);
         free(g);

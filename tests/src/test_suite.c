@@ -47,5 +47,6 @@ int main(int argc, char *argv[])
     run_suite("FINAL REPORT TEST", "GC", 2, final_report_test_case);
 
     printf("\nTesting concluso.\n");
+    getchar();
     return 0;
 }
