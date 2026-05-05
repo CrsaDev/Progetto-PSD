@@ -197,15 +197,33 @@ void gestionale_view_final_report(gestionale g) {
     int pending = 0, in_progress = 0, resolved = 0;
     int lightning = 0, street = 0, waste = 0, fault = 0;
 
-    // Gathring all stats
+    // Gathering the stats
     list_get_info_stats(g->gestionale_list, 
                         &pending, &in_progress, &resolved, 
                         &lightning, &street, &waste, &fault);
 
     int total = pending + in_progress + resolved;
 
+    // Most frequent category
+    int max_cat = lightning;
+    const char* freq_cat_name = "Lampioni (LIGHTNING)";
+    
+    if (street > max_cat) {
+        max_cat = street;
+        freq_cat_name = "Strade (STREET)";
+    }
+    if (waste > max_cat) {
+        max_cat = waste;
+        freq_cat_name = "Rifiuti (WASTE)";
+    }
+    if (fault > max_cat) {
+        max_cat = fault;
+        freq_cat_name = "Guasti (FAULT)";
+    }
+
+    // --- SHOWING DASHBOARD ---
     printf("\n========================================\n");
-    printf("         DASHBOARD STATISTICHE           \n");
+    printf("         DASHBOARD STATISTICHE          \n");
     printf("========================================\n");
 
     printf("--- STATO SEGNALAZIONI ---\n");
@@ -214,11 +232,18 @@ void gestionale_view_final_report(gestionale g) {
     printf("In lavorazione      : %d\n", in_progress);
     printf("Chiuse (RESOLVED)   : %d\n\n", resolved);
 
-    printf("--- RIPARTIZIONE PER CATEGORIA ---\n");
+    printf("--- VISUALIZZAZIONE PER CATEGORIA ---\n");
     printf("Lampioni (LIGHTNING): %d\n", lightning);
     printf("Strade (STREET)     : %d\n", street);
     printf("Rifiuti (WASTE)     : %d\n", waste);
-    printf("Guasti (FAULT)      : %d\n", fault);
+    printf("Guasti (FAULT)      : %d\n\n", fault);
+    
+    printf("--- TIPOLOGIA PIU' FREQUENTE ---\n");
+    if (total > 0) {
+        printf("%s con %d segnalazioni\n", freq_cat_name, max_cat);
+    } else {
+        printf("Nessuna segnalazione registrata.\n");
+    }
     
     printf("========================================\n\n");
 }
