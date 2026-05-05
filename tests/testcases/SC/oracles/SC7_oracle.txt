@@ -1,1 +1,1 @@
-94980 Elena_Verdi 0 Rifiuti 12/09/2026 5 3
+1000 Giulia_Ricci 2 Tubo_rotto 28/10/2026 60 0

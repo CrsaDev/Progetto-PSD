@@ -122,6 +122,64 @@ report report_copy(report r) {
     return copy;
 }
 
+report report_input(int last_index) {
+    int prio, cat_int, stat_int;
+    char citizen[50], desc[100];
+    int dd, mm, yy;
+
+    printf("\n--- Inserimento Nuovo Report ---\n");
+    
+    // Generazione automatica dell'ID basata sull'ultimo indice
+    int id = last_index + 1;
+    printf("Report ID (Automatically generated): %d\n", id);
+    
+    printf("Citizen name: "); 
+    scanf(" %[^\n]s", citizen); 
+
+    printf("Category (0:STRADE, 1:ILLUMINAZIONE, 2:RIFIUTI, 3:MALFUNZIONAMENTI): ");
+    if (scanf("%d", &cat_int) != 1 || cat_int < 0 || cat_int > 3) {
+        printf("\nError: Invalid category. Must be between 0 and 3.\n");
+        printf("Insert failed.\n");
+        return NULL;
+    }
+
+    printf("Descrizione: "); 
+    scanf(" %[^\n]s", desc);
+
+    printf("Data (formato GG MM AAAA): ");
+    if (scanf("%d %d %d", &dd, &mm, &yy) != 3) {
+        printf("\nErrore: Formato data non valido.\n");
+        printf("Inserimento annullato.\n");
+        return NULL;
+    }
+
+    date new_date = date_create(dd, mm, yy);
+    if (!new_date) {
+        printf("\nErrore: La data inserita (%02d/%02d/%04d) non esiste o non e' valida!\n", dd, mm, yy);
+        printf("Inserimento annullato.\n");
+        return NULL; 
+    }
+
+    printf("Priorita' (Valore numerico maggiore di 0): ");
+    if (scanf("%d", &prio) != 1 || prio <= 0) {
+        printf("\nErrore: La priorita' deve essere un numero intero maggiore di 0.\n");
+        printf("Inserimento annullato.\n");
+        date_destroy(new_date); // Prevents memory leaks
+        return NULL;
+    }
+
+    printf("Stato (0:PENDING, 1:IN_PROGRESS, 2:RESOLVED): ");
+    if (scanf("%d", &stat_int) != 1 || stat_int < 0 || stat_int > 2) {
+        printf("\nErrore: Stato non valido. Deve essere un numero tra 0 e 2.\n");
+        printf("Inserimento annullato.\n");
+        date_destroy(new_date);
+        return NULL;
+    }
+
+    // Returning the report
+    return report_create(id, citizen, (category)cat_int, desc, new_date, prio, (status)stat_int);
+}
+
 void report_formatted(report r) {
     if (!r) return;
 

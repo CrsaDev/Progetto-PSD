@@ -3,7 +3,7 @@
 
 #include "date.h"
 #include "report.h"
-#include "gestionale.h"
+#include "manager.h"
 
 void print_menu() {
     printf("=========================================\n");
@@ -35,9 +35,9 @@ int main() {
     system("cls || clear");
     printf("--- Inizializzazione Sistema ---\n");
 
-    gestionale g = gestionale_create();
+    manager g = manager_create();
     if (!g) {
-        printf("Errore critico: Impossibile avviare il gestionale.\n");
+        printf("Errore critico: Impossibile avviare il manager.\n");
         return -1;
     }
 
@@ -101,7 +101,7 @@ int main() {
                     case 3: filter_stat = RESOLVED;    break;
                 }
 
-                gestionale_view_reports(g, filter_cat, filter_stat);
+                manager_view_reports(g, filter_cat, filter_stat);
                 break;
             }
 
@@ -109,12 +109,12 @@ int main() {
                 int search_id;
                 printf("Inserisci l'ID della segnalazione da cercare: ");
                 scanf("%d", &search_id);
-                gestionale_find_report(g, search_id);
+                manager_find_report(g, search_id);
                 break;
             }
 
             case 3:
-                gestionale_view_urgent(g);
+                manager_view_urgent(g);
                 break;
 
             case 4: {
@@ -125,7 +125,7 @@ int main() {
                 scanf("%d", &new_status);
                 
                 if (new_status >= 0 && new_status <= 2) {
-                    gestionale_update_report_status(g, update_id, (status)new_status);
+                    manager_update_report_status(g, update_id, (status)new_status);
                 } else {
                     printf("Stato non valido!\n");
                 }
@@ -133,74 +133,20 @@ int main() {
             }
 
             case 5:
-                gestionale_view_final_report(g);
+                manager_view_final_report(g);
                 break;
 
             case 6: { 
-                int id, prio, cat_int, stat_int;
-                char citizen[50], desc[100];
-                int dd, mm, yy;
-
-                printf("\n--- Inserimento Nuovo Report ---\n");
+                int last_index = manager_get_size(g); 
+                report new_report = report_input(last_index);
                 
-                printf("ID Segnalazione (Numero maggiore di 0): "); 
-                if (scanf("%d", &id) != 1 || id <= 0) {
-                    printf("\nErrore: L'ID deve essere un numero intero positivo.\n");
-                    printf("Inserimento annullato.\n");
-                    break;
-                }
-                
-                clear_input_buffer(); 
-                printf("Nome Cittadino: "); 
-                scanf(" %[^\n]s", citizen); 
-
-                printf("Categoria (0:STRADE, 1:ILLUMINAZIONE, 2:RIFIUTI, 3:MALFUNZIONAMENTI): ");
-                if (scanf("%d", &cat_int) != 1 || cat_int < 0 || cat_int > 3) {
-                    printf("\nErrore: Categoria non valida. Deve essere un numero tra 0 e 3.\n");
-                    printf("Inserimento annullato.\n");
-                    break;
-                }
-
-                clear_input_buffer();
-                printf("Descrizione: "); 
-                scanf(" %[^\n]s", desc);
-
-                printf("Data (formato GG MM AAAA): ");
-                if (scanf("%d %d %d", &dd, &mm, &yy) != 3) {
-                    printf("\nErrore: Formato data non valido.\n");
-                    printf("Inserimento annullato.\n");
-                    break;
-                }
-
-                date new_date = date_create(dd, mm, yy);
-                if (!new_date) {
-                    printf("\nErrore: La data inserita (%02d/%02d/%04d) non esiste o non e' valida!\n", dd, mm, yy);
-                    printf("Inserimento annullato.\n");
-                    break; 
-                }
-
-                printf("Priorita' (Valore numerico maggiore di 0): ");
-                if (scanf("%d", &prio) != 1 || prio <= 0) {
-                    printf("\nErrore: La priorita' deve essere un numero intero maggiore di 0.\n");
-                    printf("Inserimento annullato.\n");
-                    date_destroy(new_date); // Prevents memory leaks
-                    break;
-                }
-
-                printf("Stato (0:PENDING, 1:IN_PROGRESS, 2:RESOLVED): ");
-                if (scanf("%d", &stat_int) != 1 || stat_int < 0 || stat_int > 2) {
-                    printf("\nErrore: Stato non valido. Deve essere un numero tra 0 e 2.\n");
-                    printf("Inserimento annullato.\n");
-                    date_destroy(new_date); 
-                    break;
-                }
-
-                report new_report = report_create(id, citizen, (category)cat_int, desc, new_date, prio, (status)stat_int);
-                if (gestionale_add_report(g, new_report)) {
-                    printf("\nSuccesso: Segnalazione inserita correttamente!\n");
-                } else {
-                    printf("\nErrore: Impossibile inserire la segnalazione. (ID Duplicato?)\n");
-                    report_destroy(new_report); 
+                if (new_report != NULL) {
+                    if (manager_add_report(g, new_report)) {
+                        printf("\nSuccesso: Segnalazione inserita correttamente!\n");
+                    } else {
+                        printf("\nErrore: Impossibile inserire la segnalazione nel database.\n");
+                        report_destroy(new_report); // Aviods memory leak
+                    }
                 }
                 break;
             }
@@ -222,6 +168,7 @@ int main() {
         
     } while (choice != 0);
 
-    gestionale_destroy(g);
+    manager_destroy(g);
+    getchar();
     return 0;
 }

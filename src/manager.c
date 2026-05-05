@@ -1,16 +1,16 @@
-#include "gestionale.h"
+#include "manager.h"
 #include "test_util.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
-struct c_gestionale {
-    list gestionale_list;
-    pQueue gestionale_pQueue;
+struct c_manager {
+    dynArr manager_list;
+    pQueue manager_pQueue;
 };
 
-int gestionale_load_database(char *fname, gestionale g) {
-    if (g == NULL) return 0;
+int manager_load_database(char *fname, manager m) {
+    if (m == NULL) return 0;
 
     FILE *f = fopen(fname, "r");
     if (f == NULL) return 1; // DB file does not exist, not an error.
@@ -29,24 +29,24 @@ int gestionale_load_database(char *fname, gestionale g) {
             report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
             
             if (r != NULL) {
-                list_add(g->gestionale_list, r);
+                dynArr_add(m->manager_list, r);
                 // Loading in the pQueue only if not resolved
                 if ((status)stat != RESOLVED) {
-                    pQueue_insert(g->gestionale_pQueue, r);
+                    pQueue_insert(m->manager_pQueue, r);
                 }
             }
         }
     }
 
     fclose(f);
-    list_reversed(g->gestionale_list); 
+    printf("\n %d Segnalazioni caricate",dynArr_get_size(m->manager_list));
     return 1;
 }
 
-int gestionale_save_database(char *fname, gestionale g) {
-    if (g == NULL || g->gestionale_list == NULL) return 0;
+int manager_save_database(char *fname, manager m) {
+    if (m == NULL || m->manager_list == NULL) return 0;
     
-    int success = foutput_list(fname, g->gestionale_list);
+    int success = foutput_list(fname, m->manager_list);
     
     if (success) {
         printf("Database salvato con successo su %s\n", fname);
@@ -62,39 +62,39 @@ int gestionale_save_database(char *fname, gestionale g) {
    MEMORY MANAGEMENT
    ------------------------------------------------------------------------- */
 
-gestionale gestionale_create() {
-    gestionale g = malloc(sizeof(*g));
-    if(!g) return NULL;
+manager manager_create() {
+    manager m = malloc(sizeof(*m));
+    if(!m) return NULL;
 
-    g->gestionale_list = list_create();
-    g->gestionale_pQueue = pQueue_create();
+    m->manager_list = dynArr_create();
+    m->manager_pQueue = pQueue_create();
 
     // Checks if they are both successfully allocated
-    if (!g->gestionale_list || !g->gestionale_pQueue) {
-        if (g->gestionale_list) list_destroy(g->gestionale_list);
-        if (g->gestionale_pQueue) pQueue_destroy(g->gestionale_pQueue);
-        free(g);
+    if (!m->manager_list || !m->manager_pQueue) {
+        if (m->manager_list) dynArr_destroy(m->manager_list);
+        if (m->manager_pQueue) pQueue_destroy(m->manager_pQueue);
+        free(m);
         return NULL;
     }
 
     // Loads up from the database
     clock_t start = clock();
-    gestionale_load_database("../db.txt", g);
+    manager_load_database("../db.txt", m);
     clock_t end = clock();
     double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("In: %.6f s\n", tempo_impiegato);
+    printf(", in:%.6fs\n", tempo_impiegato);
 
 
-    return g;
+    return m;
 }
 
-void gestionale_destroy(gestionale g) {
-    if (g) {
+void manager_destroy(manager m) {
+    if (m) {
         // Saves everything to the database.
-        gestionale_save_database("../db.txt",g);
-        list_destroy(g->gestionale_list);
-        pQueue_destroy(g->gestionale_pQueue);
-        free(g);
+        manager_save_database("../db.txt",m);
+        dynArr_destroy(m->manager_list);
+        pQueue_destroy(m->manager_pQueue);
+        free(m);
     }
 }
 
@@ -102,40 +102,48 @@ void gestionale_destroy(gestionale g) {
    OPERATIONS
    ------------------------------------------------------------------------- */
 
-int gestionale_add_report(gestionale g, report r) {
-    if (!g || !r) return 0;
+int manager_get_size(manager m) {
+    return dynArr_get_size(m->manager_list);
+}
 
-    if (list_get_report(g->gestionale_list, report_id(r)) != NULL) {
-        printf("Errore: Esiste gia' una segnalazione con ID %d!\n", report_id(r));
+int manager_add_report(manager m, report r) {
+    if (!m || !r) return 0;
+
+    if (dynArr_get_report(m->manager_list, report_id(r)) != NULL) {
+        printf("Error: A report with ID: %d already exists!\n", report_id(r));
         return 0; 
     }
 
-    int success_list = list_add(g->gestionale_list, r);
-    int success_queue = 1; 
-    
-    if (report_status(r) != RESOLVED) {
-        success_queue = pQueue_insert(g->gestionale_pQueue, r);
+    if (!dynArr_add(m->manager_list, r)) {
+        return 0;
     }
 
-    return (success_list && success_queue);
+    if (report_status(r) != RESOLVED) {
+        if (!pQueue_insert(m->manager_pQueue, r)) {
+            printf("Error: Failed to insert report %d into the priority queue.\n", report_id(r));
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
-void gestionale_update_report_status(gestionale g, int report_id, status new_status) {
-    if (!g) return;
+void manager_update_report_status(manager m, int report_id, status new_status) {
+    if (!m) return;
 
-    report r = list_get_report(g->gestionale_list, report_id);
+    report r = dynArr_get_report(m->manager_list, report_id);
     
     if (r) {
         if (report_status(r) == RESOLVED) {
-            printf("Errore: Il report #%d risulta chiuso (RESOLVED) e non puo' essere riaperto o modificato.\n", report_id);
+            printf("Error: Report #%d is RESOLVED and cannot be modified.\n", report_id);
             return;
         }
 
         report_set_status(r, new_status);
-        printf("Successo: Stato del report #%d aggiornato.\n", report_id);
+        printf("Success: Report #%d updated.\n", report_id);
         
     } else {
-        printf("Errore: Report #%d non trovato.\n", report_id);
+        printf("Error: Report #%d not found.\n", report_id);
     }
 }
 
@@ -143,62 +151,67 @@ void gestionale_update_report_status(gestionale g, int report_id, status new_sta
    QUERIES
    ------------------------------------------------------------------------- */
 
-void gestionale_find_report(gestionale g, int report_id) {
-    if (!g) return;
+void manager_find_report(manager m, int report_id) {
+    if (!m) return;
+    if(report_id <= 0 || report_id > dynArr_get_size(m->manager_list)) {
+        printf("Report con ID %d inesistente.\n", report_id);
+        return;
+    }
 
     // Clock for mesuring time to find the report
     clock_t start = clock();
-    report r = list_get_report(g->gestionale_list, report_id);
+    report r = dynArr_get_report(m->manager_list, report_id);
     clock_t end = clock();
     double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
+
     if (r) {
-        printf("Trovato: ");
+        printf("Report: ");
         report_formatted(r); 
     } else {
-        printf("Report con ID %d inesistente.\n", report_id);
+        printf("Error: Reprot #%d not found.\n", report_id);
     }
-    printf("In: %.6fs\n", tempo_impiegato);
+    printf("Found in: %.6fs\n", tempo_impiegato);
 }
 /* --- Queries --- */
 
-void gestionale_view_urgent(gestionale g) {
-    if (!g) return;
+void manager_view_urgent(manager m) {
+    if (!m) return;
 
-    report urgent = pQueue_get_max(g->gestionale_pQueue);
+    report urgent = pQueue_get_max(m->manager_pQueue);
     
     if (urgent) {
         printf("=== SEGNALAZIONE PIU' URGENTE ===\n");
         report_formatted(urgent);
     } else {
-        printf("Nessuna segnalazione urgente in sospeso.\n");
+        printf("No urgent reports in queue.\n");
     }
 }
 
-void gestionale_view_reports(gestionale g, int cat, int stat) {
-    if (!g) return;
+void manager_view_reports(manager m, int cat, int stat) {
+    if (!m) return;
 
     printf("\n--- ELENCO SEGNALAZIONI FILTRATE ---\n");
     
-    list filtered = list_get_filtered(g->gestionale_list, cat, stat);
+    dynArr filtered = dynArr_get_filtered(m->manager_list, cat, stat);
     
-    if (list_is_empty(filtered)) {
-        printf("Nessun report corrisponde ai criteri di ricerca.\n");
+    if (dynArr_is_empty(filtered)) {
+        printf("No report was found.\n");
     } else {
-        list_print_formatted(filtered);
+        dynArr_print_formatted(filtered);
     }
     
-    list_destroy(filtered);
+    dynArr_destroy(filtered);
 }
 
-void gestionale_view_final_report(gestionale g) {
-    if (!g || !g->gestionale_list) return;
+void manager_view_final_report(manager m) {
+    if (!m || !m->manager_list) return;
 
     // Local variables to store counts
     int pending = 0, in_progress = 0, resolved = 0;
     int lightning = 0, street = 0, waste = 0, fault = 0;
 
     // Gathering the stats
-    list_get_info_stats(g->gestionale_list, 
+    dynArr_get_info_stats(m->manager_list, 
                         &pending, &in_progress, &resolved, 
                         &lightning, &street, &waste, &fault);
 
