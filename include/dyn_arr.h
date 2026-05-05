@@ -4,54 +4,57 @@
 #include <stdio.h>
 #include "report.h"
 
-typedef struct c_list *list;
+typedef struct c_dynArr *dynArr;
 
 /* --- Memory management --- */
 
-/* Allocates a new empty list. Returns NULL in case of fail */
-list list_create(void);
+/* Allocates a new dynamic array. Returns NULL in case of fail */
+dynArr dynArr_create(void);
 
 /* Deallocates the whole list, the nodes and the internal reports */
-void list_destroy(list l);
+void dynArr_destroy(dynArr d);
 
 /* --- Queries --- */
 
+/* Returns the size of the list */
+int dynArr_get_size(dynArr d);
+
 /* Returns 1 if list doesn't have elements, 0 if yes */
-int list_is_empty(list l);
+int dynArr_is_empty(dynArr d);
 
 /* Returns the report if list has the report, else null */
-report list_get_report(list l,int id);
+report dynArr_get_report(dynArr d,int id);
 
 /* Compares two lists and returns 1 if the elements are the same in the same order */
-int list_compare(list l1, list l2);
+int dynArr_compare(dynArr d1, dynArr d2);
 
 /* Reverses the list in place */
-void list_reversed(list l);
+void dynArr_reversed(dynArr d);
 
 /* --- Operations --- */
 
 /* Inserts a report as the new list head. Returns 1 if the operation was successful and 0 if not  */
-int list_add(list l, report r);
+int dynArr_add(dynArr d, report r);
 
 /* Extracts the first report from the list */
-report list_pop_head(list l);
+report dynArr_pop_head(dynArr d);
 
 /* Gets a filtered copy of the list */
-list list_get_filtered(list l, int cat, int stat);
+dynArr dynArr_get_filtered(dynArr d, int cat, int stat);
 
 /* Assigns the counter of each category to each variable */
-void list_get_info_stats(list l, int *pending, int *in_prog, int *res, int *light, int *street, int *waste, int *fault);
+void dynArr_get_info_stats(dynArr d, int *pending, int *in_prog, int *res, int *light, int *street, int *waste, int *fault);
 
 
 /* --- Output --- */
 
 /* Prints the whole formatted list. */
-void list_print_formatted(list l);
+void dynArr_print_formatted(dynArr d);
 
 /* Writes the list on a file using the default format. */
-void list_print_file(list l, FILE *stream);
+void dynArr_print_file(dynArr d, FILE *stream);
 
 /* Prints the formatted list filtering it by category and status */
-void list_print_filtered(list l, int cat, int stat);
+void dynArr_print_filtered(dynArr d, int cat, int stat);
 
 #endif

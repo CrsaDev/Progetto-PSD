@@ -17,47 +17,49 @@ FILE* fopen_at_line(const char *fname, int hop) {
         fgetc(f); // Consumes \n
     }
 
-    return f; // Returns pointsr to the file at proper position
+    return f; // Returns pointer to the file at proper position
 }
 
-
-list finput_list(char *fname, int hop) {
+dynArr finput_list(char *fname, int hop) {
     FILE *f = fopen_at_line(fname, hop);
     if (f == NULL) return NULL;
 
-    list tmp = list_create();
-    if (tmp == NULL) { fclose(f); return NULL; }
+    dynArr tmp = dynArr_create();
+    if (tmp == NULL) { 
+        fclose(f); 
+        return NULL; 
+    }
     
     int id, day, month, year, cat, prio, stat;
     char citizen[50], desc[100];
-    
-    // Reading buffer for line
     char line[256];
 
-    // Adding elements to head
     while (fgets(line, sizeof(line), f)) {
+        // sscanf returns the fields
         if (sscanf(line, "%d %49s %d %99s %d/%d/%d %d %d", 
                    &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
             
             date dt = date_create(day, month, year);
+            if (dt == NULL) continue; // If date isn't valid, skip
+
             report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
             
             if (r != NULL) {
-                // Adds to head
-                list_add(tmp, r);
+                if (!dynArr_add(tmp, r)) {
+                    report_destroy(r); 
+                    break;
+                }
+            } else {
+                date_destroy(dt); 
             }
         }
     }
 
     fclose(f);
-
-    // Re-reversing in place so the list is in the correct order again.
-    list_reversed(tmp); 
-    
     return tmp;
 }
 
-int foutput_list(char *fname, list l) {
+int foutput_list(char *fname, dynArr l) {
     FILE *f = fopen(fname, "w");
     if (f == NULL) {
         printf("Attenzione: Impossibile creare il file %s\n", fname);
@@ -65,8 +67,8 @@ int foutput_list(char *fname, list l) {
     }
 
     // Printing list to the file
-    if (!list_is_empty(l)) {
-        list_print_file(l, f); 
+    if (!dynArr_is_empty(l)) {
+        dynArr_print_file(l, f); 
     }
 
     fclose(f);
@@ -88,7 +90,7 @@ int read_int(const char *fname, int hop) {
         return -1;
     }
 
-    // Skipping hop lines
+    // Skipping "hop" lines
     for(int i = 0; i < hop; i++) {
         fscanf(f, "%*[^\n]"); 
         fgetc(f);             
