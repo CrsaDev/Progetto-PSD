@@ -125,6 +125,7 @@ int manager_add_report(manager m, report r) {
         }
     }
 
+    manager_save_database("../db.txt",m);
     return 1;
 }
 
@@ -140,6 +141,7 @@ void manager_update_report_status(manager m, int report_id, status new_status) {
         }
 
         report_set_status(r, new_status);
+        manager_save_database("../db.txt",m);
         printf("Success: Report #%d updated.\n", report_id);
         
     } else {
