@@ -1,6 +1,170 @@
-1
-0
+-1
+2
 -------
-1 Luigi_Verdi 1 Lampione 01/01/2026 10 0
-2 Mario_Rossi 0 Buca_marciapiede 10/10/2026 50 1
-3 Anna_Bianchi 2 Rifiuti 12/12/2026 99 1
+1;Mario Marino;0;Semaforo guasto;07/07/2026;89;2
+2;Giulia Gialli;1;Albero pericolante;04/08/2026;63;1
+3;Antonio Bianchi;3;Cartello stradale divelto;30/04/2026;80;0
+4;Luigi Rossi;3;Buca sul marciapiede;25/04/2026;24;0
+5;Antonio Verdi;1;Semaforo guasto;04/09/2026;37;2
+6;Francesca Rossi;3;Buca sul marciapiede;04/06/2026;14;0
+7;Matteo Greco;1;Rifiuti abbandonati;25/03/2026;79;0
+8;Francesca Colombo;2;Buca sul marciapiede;14/07/2026;93;2
+9;Antonio Colombo;1;Tombino ostruito;25/07/2026;29;1
+10;Francesca Gallo;1;Lampione;11/03/2026;91;2
+11;Luigi Marino;3;Buca sul marciapiede;27/11/2026;62;2
+12;Anna Greco;1;Tombino ostruito;30/03/2026;42;1
+13;Anna Neri;0;Semaforo guasto;17/01/2026;61;0
+14;Paolo Costa;3;Tubo dell'acqua rotto;16/11/2026;88;1
+15;Mario Gallo;2;Cartello stradale divelto;16/10/2026;17;0
+16;Luigi Greco;0;Albero pericolante;27/12/2026;66;1
+17;Anna Romano;1;Buca sul marciapiede;28/06/2026;24;0
+18;Luca Gallo;0;Cartello stradale divelto;10/02/2026;16;0
+19;Paolo Neri;0;Buca sul marciapiede;15/11/2026;68;0
+20;Paolo Rossi;3;Tombino ostruito;15/07/2026;55;1
+21;Luigi Rossi;3;Buca sul marciapiede;05/03/2026;57;0
+22;Luigi Gialli;0;Lampione;25/09/2026;86;0
+23;Paolo Bianchi;1;Cartello stradale divelto;07/01/2026;95;2
+24;Paolo Bianchi;2;Rifiuti abbandonati;04/10/2026;63;2
+25;Matteo Bianchi;0;Tombino ostruito;07/05/2026;1;1
+26;Chiara Gallo;0;Cartello stradale divelto;06/10/2026;17;1
+27;Anna Verdi;0;Rifiuti abbandonati;04/05/2026;3;0
+28;Chiara Costa;1;Tubo dell'acqua rotto;26/02/2026;14;1
+29;Paolo Ricci;3;Semaforo guasto;27/07/2026;16;0
+30;Chiara Neri;2;Semaforo guasto;01/05/2026;25;1
+31;Mario Neri;3;Lampione;20/02/2026;37;1
+32;Francesca Romano;0;Cartello stradale divelto;04/11/2026;40;2
+33;Paolo Gialli;3;Albero pericolante;11/03/2026;80;1
+34;Luca Romano;1;Cartello stradale divelto;09/12/2026;7;0
+35;Sara Costa;3;Semaforo guasto;10/01/2026;5;2
+36;Luca Greco;1;Buca sul marciapiede;21/03/2026;12;1
+37;Matteo Colombo;0;Semaforo guasto;20/12/2026;23;1
+38;Paolo Greco;0;Rifiuti abbandonati;19/02/2026;39;1
+39;Luca Marino;3;Buca sul marciapiede;15/11/2026;11;2
+40;Giulia Rossi;0;Tombino ostruito;23/02/2026;51;1
+41;Luigi Greco;1;Albero pericolante;11/11/2026;29;2
+42;Paolo Marino;0;Albero pericolante;18/06/2026;28;0
+43;Luca Romano;3;Rifiuti abbandonati;04/03/2026;83;0
+44;Sara Marino;0;Semaforo guasto;22/05/2026;53;1
+45;Luigi Romano;1;Tombino ostruito;01/12/2026;68;1
+46;Luigi Greco;1;Albero pericolante;26/10/2026;22;2
+47;Sara Costa;2;Lampione;01/12/2026;63;2
+48;Luca Romano;2;Buca sul marciapiede;24/12/2026;92;1
+49;Luigi Verdi;2;Buca sul marciapiede;25/12/2026;41;0
+50;Giulia Neri;2;Tubo dell'acqua rotto;03/01/2026;11;2
+51;Antonio Greco;0;Lampione;20/07/2026;55;2
+52;Anna Bianchi;3;Cartello stradale divelto;30/09/2026;99;1
+53;Anna Rossi;0;Lampione;30/11/2026;84;0
+54;Elena Gialli;3;Buca sul marciapiede;14/09/2026;85;2
+55;Chiara Rossi;0;Semaforo guasto;05/09/2026;56;1
+56;Matteo Romano;1;Buca sul marciapiede;29/04/2026;95;0
+57;Matteo Greco;2;Rifiuti abbandonati;26/10/2026;38;0
+58;Chiara Ricci;2;Tombino ostruito;26/11/2026;24;1
+59;Francesca Ricci;3;Semaforo guasto;06/09/2026;2;0
+60;Luigi Gialli;1;Albero pericolante;11/02/2026;2;1
+61;Luigi Neri;1;Albero pericolante;12/05/2026;52;1
+62;Luigi Colombo;2;Tubo dell'acqua rotto;29/06/2026;76;0
+63;Mario Marino;1;Albero pericolante;11/06/2026;29;2
+64;Luca Verdi;3;Tombino ostruito;29/08/2026;98;1
+65;Sara Verdi;1;Tombino ostruito;25/07/2026;4;0
+66;Sara Greco;2;Albero pericolante;04/07/2026;87;1
+67;Giulia Costa;1;Cartello stradale divelto;30/09/2026;37;2
+68;Francesca Verdi;0;Buca sul marciapiede;27/12/2026;82;0
+69;Luca Ricci;3;Tombino ostruito;25/06/2026;19;0
+70;Matteo Verdi;1;Semaforo guasto;19/11/2026;94;1
+71;Elena Costa;2;Lampione;18/01/2026;11;1
+72;Luigi Ricci;0;Lampione;31/08/2026;100;2
+73;Chiara Romano;2;Albero pericolante;23/02/2026;21;0
+74;Elena Gallo;0;Rifiuti abbandonati;13/11/2026;94;1
+75;Matteo Romano;3;Cartello stradale divelto;09/09/2026;1;2
+76;Luca Rossi;3;Cartello stradale divelto;11/12/2026;54;2
+77;Luigi Rossi;3;Tubo dell'acqua rotto;19/10/2026;15;2
+78;Luigi Neri;3;Semaforo guasto;01/01/2026;42;2
+79;Mario Gallo;1;Semaforo guasto;06/10/2026;54;1
+80;Matteo Gallo;1;Rifiuti abbandonati;31/01/2026;85;2
+81;Luca Rossi;0;Lampione;07/07/2026;93;0
+82;Sara Neri;3;Buca sul marciapiede;27/12/2026;96;2
+83;Anna Neri;3;Tubo dell'acqua rotto;22/02/2026;21;2
+84;Francesca Verdi;2;Tombino ostruito;12/08/2026;4;1
+85;Anna Bianchi;0;Albero pericolante;22/07/2026;97;2
+86;Chiara Gialli;1;Cartello stradale divelto;05/07/2026;82;1
+87;Matteo Marino;2;Cartello stradale divelto;27/09/2026;12;1
+88;Sara Romano;1;Cartello stradale divelto;29/04/2026;27;2
+89;Chiara Gialli;0;Cartello stradale divelto;14/05/2026;49;2
+90;Anna Greco;2;Cartello stradale divelto;01/04/2026;75;0
+91;Chiara Bianchi;3;Tombino ostruito;04/12/2026;100;0
+92;Matteo Romano;3;Buca sul marciapiede;23/12/2026;81;0
+93;Francesca Romano;3;Buca sul marciapiede;20/05/2026;38;0
+94;Luca Rossi;2;Tombino ostruito;25/11/2026;68;2
+95;Giulia Rossi;0;Tombino ostruito;09/06/2026;41;2
+96;Chiara Neri;0;Tubo dell'acqua rotto;03/10/2026;6;0
+97;Matteo Bianchi;3;Lampione;08/07/2026;97;1
+98;Antonio Marino;2;Tubo dell'acqua rotto;16/09/2026;1;1
+99;Matteo Romano;2;Tubo dell'acqua rotto;13/04/2026;33;1
+100;Paolo Ricci;2;Tombino ostruito;19/09/2026;23;2
+101;Antonio Gallo;3;Tubo dell'acqua rotto;19/09/2026;35;0
+102;Matteo Romano;1;Cartello stradale divelto;22/01/2026;23;2
+103;Chiara Gallo;3;Tubo dell'acqua rotto;24/01/2026;82;0
+104;Antonio Greco;0;Albero pericolante;01/08/2026;41;0
+105;Luca Marino;2;Tombino ostruito;25/03/2026;74;2
+106;Mario Ricci;2;Rifiuti abbandonati;20/11/2026;76;2
+107;Paolo Greco;0;Cartello stradale divelto;17/11/2026;61;0
+108;Anna Rossi;0;Buca sul marciapiede;12/09/2026;10;1
+109;Paolo Gallo;3;Tubo dell'acqua rotto;05/08/2026;30;2
+110;Chiara Neri;3;Lampione;12/02/2026;99;0
+111;Anna Neri;2;Semaforo guasto;11/09/2026;59;2
+112;Chiara Rossi;0;Albero pericolante;18/07/2026;57;0
+113;Luigi Ricci;0;Lampione;20/01/2026;29;0
+114;Chiara Rossi;3;Albero pericolante;06/04/2026;86;2
+115;Chiara Romano;3;Semaforo guasto;15/04/2026;17;1
+116;Antonio Ricci;2;Cartello stradale divelto;06/12/2026;35;1
+117;Elena Rossi;1;Tubo dell'acqua rotto;05/10/2026;32;1
+118;Francesca Neri;3;Lampione;14/12/2026;73;0
+119;Chiara Romano;2;Albero pericolante;08/02/2026;99;1
+120;Elena Rossi;1;Cartello stradale divelto;18/04/2026;24;1
+121;Elena Colombo;3;Tombino ostruito;23/12/2026;11;0
+122;Anna Gialli;2;Tombino ostruito;13/05/2026;15;0
+123;Chiara Bianchi;2;Rifiuti abbandonati;14/06/2026;98;1
+124;Paolo Marino;2;Tubo dell'acqua rotto;19/03/2026;92;2
+125;Luca Costa;0;Cartello stradale divelto;09/06/2026;76;2
+126;Antonio Bianchi;2;Rifiuti abbandonati;25/07/2026;33;0
+127;Sara Bianchi;1;Cartello stradale divelto;02/03/2026;4;0
+128;Giulia Ricci;0;Semaforo guasto;24/07/2026;92;1
+129;Antonio Costa;2;Rifiuti abbandonati;08/01/2026;2;0
+130;Paolo Marino;1;Rifiuti abbandonati;11/04/2026;1;1
+131;Luigi Romano;3;Buca sul marciapiede;14/02/2026;63;0
+132;Luca Gallo;3;Lampione;14/11/2026;87;1
+133;Paolo Bianchi;0;Albero pericolante;04/09/2026;64;2
+134;Luigi Greco;0;Lampione;09/01/2026;52;2
+135;Paolo Romano;2;Semaforo guasto;10/11/2026;59;2
+136;Matteo Colombo;0;Tubo dell'acqua rotto;08/11/2026;70;0
+137;Chiara Bianchi;0;Buca sul marciapiede;05/12/2026;70;2
+138;Mario Neri;1;Tombino ostruito;12/05/2026;30;1
+139;Francesca Gallo;1;Rifiuti abbandonati;04/08/2026;6;0
+140;Elena Marino;2;Tombino ostruito;08/05/2026;23;1
+141;Matteo Gialli;2;Albero pericolante;19/12/2026;87;2
+142;Sara Rossi;2;Buca sul marciapiede;22/07/2026;0;0
+143;Anna Colombo;0;Cartello stradale divelto;06/01/2026;18;0
+144;Luca Ricci;0;Albero pericolante;04/04/2026;14;2
+145;Francesca Rossi;3;Buca sul marciapiede;26/04/2026;51;1
+146;Luca Gallo;1;Cartello stradale divelto;03/06/2026;2;1
+147;Mario Gialli;0;Rifiuti abbandonati;06/08/2026;86;1
+148;Mario Gialli;1;Semaforo guasto;18/08/2026;21;0
+149;Luca Rossi;1;Lampione;10/01/2026;67;0
+150;Paolo Colombo;1;Buca sul marciapiede;13/12/2026;66;1
+151;Mario Ricci;2;Buca sul marciapiede;02/03/2026;74;1
+152;Francesca Marino;3;Cartello stradale divelto;25/08/2026;62;0
+153;Elena Marino;0;Tombino ostruito;15/10/2026;31;2
+154;Elena Verdi;1;Rifiuti abbandonati;19/08/2026;59;1
+155;Anna Marino;0;Lampione;24/10/2026;20;1
+156;Giulia Rossi;1;Lampione;23/02/2026;4;0
+157;Sara Ricci;1;Lampione;23/05/2026;90;2
+158;Mario Bianchi;0;Buca sul marciapiede;17/12/2026;77;0
+159;Chiara Gialli;1;Rifiuti abbandonati;28/10/2026;90;1
+160;Luigi Ricci;1;Buca sul marciapiede;02/10/2026;18;1
+161;Anna Gallo;2;Tombino ostruito;30/03/2026;90;1
+162;Elena Verdi;1;Albero pericolante;18/05/2026;21;0
+163;Luigi Costa;3;Semaforo guasto;31/08/2026;96;2
+164;Giulia Gallo;0;Semaforo guasto;06/03/2026;40;0
+165;Antonio Costa;1;Lampione;15/06/2026;87;0
+166;Francesca Verdi;1;Tubo dell'acqua rotto;17/09/2026;87;0
+167;Luca Colombo;1;Tombino ostruito;07/12/2026;47;0

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define INITIAL 10
+#define INITIAL 500
 
 typedef struct c_pQueue {
     report *queue;      

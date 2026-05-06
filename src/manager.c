@@ -5,7 +5,7 @@
 #include <string.h>
 
 struct c_manager {
-    dynArr manager_list;
+    dirTable manager_list;
     pQueue manager_pQueue;
 };
 
@@ -19,17 +19,16 @@ int manager_load_database(char *fname, manager m) {
     char citizen[50], desc[100];
     char line[256];
 
-    // fgets + sscanf for line reading
     while (fgets(line, sizeof(line), f)) {
-        // Reading the report
-        if (sscanf(line, "%d %49s %d %99s %d/%d/%d %d %d", 
+        // %49[^;] -> reads 49 chars or until it finds a ';'
+        if (sscanf(line, "%d;%49[^;];%d;%99[^;];%d/%d/%d;%d;%d", 
                    &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
             
             date dt = date_create(day, month, year);
             report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
             
             if (r != NULL) {
-                dynArr_add(m->manager_list, r);
+                dirTable_add(m->manager_list, r);
                 // Loading in the pQueue only if not resolved
                 if ((status)stat != RESOLVED) {
                     pQueue_insert(m->manager_pQueue, r);
@@ -39,7 +38,7 @@ int manager_load_database(char *fname, manager m) {
     }
 
     fclose(f);
-    printf("\n %d Segnalazioni caricate",dynArr_get_size(m->manager_list));
+    printf("\n %d Segnalazioni caricate",dirTable_get_size(m->manager_list));
     return 1;
 }
 
@@ -66,12 +65,12 @@ manager manager_create() {
     manager m = malloc(sizeof(*m));
     if(!m) return NULL;
 
-    m->manager_list = dynArr_create();
+    m->manager_list = dirTable_create();
     m->manager_pQueue = pQueue_create();
 
     // Checks if they are both successfully allocated
     if (!m->manager_list || !m->manager_pQueue) {
-        if (m->manager_list) dynArr_destroy(m->manager_list);
+        if (m->manager_list) dirTable_destroy(m->manager_list);
         if (m->manager_pQueue) pQueue_destroy(m->manager_pQueue);
         free(m);
         return NULL;
@@ -92,7 +91,7 @@ void manager_destroy(manager m) {
     if (m) {
         // Saves everything to the database.
         manager_save_database("../db.txt",m);
-        dynArr_destroy(m->manager_list);
+        dirTable_destroy(m->manager_list);
         pQueue_destroy(m->manager_pQueue);
         free(m);
     }
@@ -102,19 +101,19 @@ void manager_destroy(manager m) {
    OPERATIONS
    ------------------------------------------------------------------------- */
 
-int manager_get_size(manager m) {
-    return dynArr_get_size(m->manager_list);
+int manager_get_max_id(manager m) {
+    return dirTable_get_max_id(m->manager_list);
 }
 
 int manager_add_report(manager m, report r) {
     if (!m || !r) return 0;
 
-    if (dynArr_get_report(m->manager_list, report_id(r)) != NULL) {
+    if (dirTable_get_report(m->manager_list, report_id(r)) != NULL) {
         printf("Error: A report with ID: %d already exists!\n", report_id(r));
         return 0; 
     }
 
-    if (!dynArr_add(m->manager_list, r)) {
+    if (!dirTable_add(m->manager_list, r)) {
         return 0;
     }
 
@@ -132,7 +131,7 @@ int manager_add_report(manager m, report r) {
 void manager_update_report_status(manager m, int report_id, status new_status) {
     if (!m) return;
 
-    report r = dynArr_get_report(m->manager_list, report_id);
+    report r = dirTable_get_report(m->manager_list, report_id);
     
     if (r) {
         if (report_status(r) == RESOLVED) {
@@ -155,14 +154,14 @@ void manager_update_report_status(manager m, int report_id, status new_status) {
 
 void manager_find_report(manager m, int report_id) {
     if (!m) return;
-    if(report_id <= 0 || report_id > dynArr_get_size(m->manager_list)) {
+    if(report_id <= 0 || report_id > dirTable_get_size(m->manager_list)) {
         printf("Report con ID %d inesistente.\n", report_id);
         return;
     }
 
     // Clock for mesuring time to find the report
     clock_t start = clock();
-    report r = dynArr_get_report(m->manager_list, report_id);
+    report r = dirTable_get_report(m->manager_list, report_id);
     clock_t end = clock();
     double tempo_impiegato = (double)(end - start) / CLOCKS_PER_SEC;
 
@@ -193,16 +192,8 @@ void manager_view_reports(manager m, int cat, int stat) {
     if (!m) return;
 
     printf("\n--- ELENCO SEGNALAZIONI FILTRATE ---\n");
+    dirTable_print_filtered(m->manager_list, cat, stat);
     
-    dynArr filtered = dynArr_get_filtered(m->manager_list, cat, stat);
-    
-    if (dynArr_is_empty(filtered)) {
-        printf("No report was found.\n");
-    } else {
-        dynArr_print_formatted(filtered);
-    }
-    
-    dynArr_destroy(filtered);
 }
 
 void manager_view_final_report(manager m) {
@@ -213,7 +204,7 @@ void manager_view_final_report(manager m) {
     int lightning = 0, street = 0, waste = 0, fault = 0;
 
     // Gathering the stats
-    dynArr_get_info_stats(m->manager_list, 
+    dirTable_get_info_stats(m->manager_list, 
                         &pending, &in_progress, &resolved, 
                         &lightning, &street, &waste, &fault);
 

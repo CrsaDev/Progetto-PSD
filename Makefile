@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -g -Iinclude -Itests/include
 
 # .c files, necessary for compiling 
-COMMON_SRCS = src/date.c src/report.c src/dyn_arr.c src/p_queue.c src/manager.c tests/src/test_util.c
+COMMON_SRCS = src/date.c src/report.c src/dir_table.c src/p_queue.c src/manager.c tests/src/test_util.c
 
 # --- Main program ---
 MAIN_SRCS = src/main.c

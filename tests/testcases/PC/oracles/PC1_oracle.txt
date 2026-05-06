@@ -1,1 +1,1 @@
-95000 Paolo_Costa 2 Cartello_divelto 20/11/2026 121 3
+3;Antonio Bianchi;3;Cartello stradale divelto;30/04/2026;80;0

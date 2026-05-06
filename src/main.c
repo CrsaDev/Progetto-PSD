@@ -137,7 +137,7 @@ int main() {
                 break;
 
             case 6: { 
-                int last_index = manager_get_size(g); 
+                int last_index = manager_get_max_id(g); 
                 report new_report = report_input(last_index);
                 
                 if (new_report != NULL) {

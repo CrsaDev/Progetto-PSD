@@ -1,8 +1,9 @@
 #include "test_cases.h"
 #include "test_util.h"
 #include "report.h"
-#include "dyn_arr.h"
+#include "dir_table.h"
 #include "p_queue.h"
+#include <stdlib.h>
 
 #define M 50
 
@@ -11,37 +12,28 @@ int registration_test_case(char *testcase_id, int n) {
     get_test_filenames(testcase_id, n, in_f, out_f, oracle_f);
 
     // Loading the files
-    dynArr oracle_list = finput_list(oracle_f, 0);
-    dynArr input_list = finput_list(in_f, 2);
-
-    dynArr temp_l = finput_list(in_f, 0);
-    if (temp_l == NULL) {
-        dynArr_destroy(oracle_list);
-        dynArr_destroy(input_list);
-        return 0;
-    }
+    dirTable oracle_table = finput_dirTable(oracle_f, 0); // Skipping 0 lines
+    dirTable input_table = finput_dirTable(in_f, 2); // Skipping 2 lines 
 
     // Reading the input report
-    report input_report = dynArr_pop_head(temp_l); 
-    
-    dynArr_destroy(temp_l);
+    report input_report = read_report(in_f,0);  // Skipping 0 lines
 
     if (input_report != NULL) {
-        if (!dynArr_add(input_list, input_report)) {
+        if (!dirTable_add(input_table, input_report)) {
             report_destroy(input_report);
         }
     }
-    
+
     // Comparing the two arrays
-    int success = foutput_list(out_f, input_list);
+    int success = foutput_list(out_f, input_table);
     int compare = 0;
 
     if (success) {
-        compare = dynArr_compare(oracle_list, input_list);
+        compare = dirTable_compare(oracle_table, input_table);
     }
 
-    dynArr_destroy(input_list);
-    dynArr_destroy(oracle_list);
+    dirTable_destroy(input_table);
+    dirTable_destroy(oracle_table);
 
     return compare;
 }
@@ -51,40 +43,31 @@ int search_test_case(char *testcase_id, int n) {
     get_test_filenames(testcase_id, n, in_f, out_f, oracle_f);
 
     // Loading lists
-    dynArr oracle_list = finput_list(oracle_f, 0);
-    dynArr input_list = finput_list(in_f, 2);
-    
+    report oracle_report = read_report(oracle_f,0);
+    dirTable input_table = finput_dirTable(in_f, 2);
+
     // Reading id
     int target_id = read_int(in_f, 0);
+    report output_report = NULL;
 
     // Creating output list
-    dynArr output_list = dynArr_create(); 
-    
-    if (target_id != -1 && input_list != NULL && output_list != NULL) {
-        report found = dynArr_get_report(input_list, target_id);
-        
-        if (found != NULL) {
-            report copy = report_copy(found);
-            if (!dynArr_add(output_list, copy)) {
-                // Free the copy if it fails
-                report_destroy(copy);
-            }
-        }
+    if (target_id > 0 || !dirTable_is_empty(input_table)) {
+        output_report = report_copy(dirTable_get_report(input_table, target_id));
     }
 
     // Writing in output
-    int success = foutput_list(out_f, output_list);
+    int success = write_report(out_f,output_report);
     int compare = 0;
 
     // Confronting the arrays
     if (success) {
-        compare = dynArr_compare(oracle_list, output_list);
+        compare = report_compare(oracle_report, output_report);
     }
 
     // Freeing the memory
-    dynArr_destroy(input_list);
-    dynArr_destroy(output_list);
-    dynArr_destroy(oracle_list);
+    dirTable_destroy(input_table);
+    report_destroy(oracle_report);
+    free(output_report);
 
     return compare;
 }
@@ -94,23 +77,23 @@ int status_update_test_case(char *testcase_id, int n)
     char in_f[M], out_f[M], oracle_f[M];
     get_test_filenames(testcase_id, n, in_f, out_f, oracle_f);
 
-    dynArr oracle_list = finput_list(oracle_f, 0);
-    dynArr input_list = finput_list(in_f, 2);
-
     int new_status = read_int(in_f,0);
+    report oracle_report = read_report(oracle_f, 0);
+    report input_report = read_report(in_f, 2);
 
-    report to_update = dynArr_pop_head(input_list);
-    report_set_status(to_update, (status)new_status);
-    dynArr_add(input_list, to_update);
+    // Updating the status of the report
+    report_set_status(input_report, (status)new_status);
 
-    int success = foutput_list(out_f, input_list);
+
+    int success = write_report(out_f, input_report);
     int compare = 0;
     if (success) {
-        compare = dynArr_compare(oracle_list, input_list);
+        compare = report_compare(oracle_report, input_report);
     }
 
-    dynArr_destroy(input_list);
-    dynArr_destroy(oracle_list);
+    // Freeing memory
+    free(oracle_report);
+    free(input_report);
     
     return compare;
 }
@@ -119,42 +102,45 @@ int priority_test_case(char *testcase_id, int n) {
     char in_f[M], out_f[M], oracle_f[M];
     get_test_filenames(testcase_id, n, in_f, out_f, oracle_f);
 
-    dynArr oracle_list = finput_list(oracle_f, 0);
-    dynArr input_list = finput_list(in_f, 0);
+    report oracle_report = read_report(oracle_f, 0);
+    dirTable input_table = finput_dirTable(in_f, 0);
 
+    // Initiates the priority queue
     pQueue test_queue = pQueue_create();
-    dynArr output_list = dynArr_create(); 
+    // MUST BE NULL TO WORK!
+    report output_report = NULL;
 
-    if (input_list != NULL) {
-    while (!dynArr_is_empty(input_list)) {
-            report r = dynArr_pop_head(input_list);
-            
+    if (!dirTable_is_empty(input_table)) {
+        for(int i = 0; i<= dirTable_get_size(input_table); i++)
+        {
+            report r = dirTable_get_report(input_table,i);
             if (report_status(r) != RESOLVED) {
                 pQueue_insert(test_queue, r);
-            } else {
-                report_destroy(r); 
-            }
-        }
+            } 
+        } 
     }
+
+
 
     if (test_queue != NULL) {
         report max_rep = pQueue_get_max(test_queue);
         if (max_rep != NULL) {
-            dynArr_add(output_list, report_copy(max_rep));
+            output_report = report_copy(max_rep);
         }
     }
 
-    int success = foutput_list(out_f, output_list);
+    int success = write_report(out_f, output_report);
     int compare = 0;
     
     if (success) {
-        compare = dynArr_compare(oracle_list, output_list);
+        compare = report_compare(oracle_report, output_report);
     }
 
-    dynArr_destroy(input_list);
-    dynArr_destroy(output_list);
-    dynArr_destroy(oracle_list);
-    pQueue_destroy(test_queue);
+    if(test_queue) pQueue_destroy(test_queue);
+    if(input_table) dirTable_destroy(input_table);
+    if(output_report) report_destroy(output_report);
+    if(oracle_report) report_destroy(oracle_report);
+    
 
     return compare;
 }
@@ -163,24 +149,25 @@ int reports_filter_test_case(char *testcase_id, int n) {
     char in_f[M], out_f[M], oracle_f[M];
     get_test_filenames(testcase_id, n, in_f, out_f, oracle_f);
 
-    dynArr oracle_list = finput_list(oracle_f, 0);
-    dynArr input_list = finput_list(in_f, 3);
+    dirTable oracle_table = finput_dirTable(oracle_f, 0);
+    dirTable input_table = finput_dirTable(in_f, 3); // Skipping 3 lines because first two are for category and status
 
     int target_cat = read_int(in_f, 0);
     int target_stat = read_int(in_f, 1);
 
-    dynArr result_list = dynArr_get_filtered(input_list, target_cat, target_stat);
+    dirTable result_list = dirTable_get_filtered(input_table, target_cat, target_stat);
+
 
     int success = foutput_list(out_f, result_list);
     int compare = 0;
 
-    if (success) {
-        compare = dynArr_compare(oracle_list, result_list);
+    if (success && oracle_table != NULL && result_list != NULL) {
+        compare = dirTable_compare(oracle_table, result_list);
     }
     
-    dynArr_destroy(oracle_list);
-    dynArr_destroy(input_list);
-    dynArr_destroy(result_list);
+    if(oracle_table) dirTable_destroy(oracle_table);
+    if(input_table) dirTable_destroy(input_table);
+    if(result_list) dirTable_destroy(result_list);
 
     return compare;
 }
@@ -195,12 +182,12 @@ int final_report_test_case(char *testcase_id, int n) {
         return 0;
     }
 
-    dynArr input_list = finput_list(in_f, 0);
+    dirTable input_list = finput_dirTable(in_f, 0);
 
     int pending = 0, in_prog = 0, res = 0;
     int light = 0, street = 0, waste = 0, fault = 0;
 
-    dynArr_get_info_stats(input_list, 
+    dirTable_get_info_stats(input_list, 
                         &pending, &in_prog, &res, 
                         &light, &street, &waste, &fault);
 
@@ -226,7 +213,7 @@ int final_report_test_case(char *testcase_id, int n) {
     }
 
     fclose(fout);
-    dynArr_destroy(input_list);
+    dirTable_destroy(input_list);
 
     return valid; 
 }

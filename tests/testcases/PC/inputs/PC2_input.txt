@@ -1,3 +1,10 @@
-10 Luigi_Verdi 1 Lampione 01/01/2026 10 0
-20 Mario_Rossi 0 Buca_marciapiede 10/10/2026 50 1
-30 Anna_Bianchi 2 Rifiuti 12/12/2026 99 1
+1;Mario Marino;0;Semaforo guasto;07/07/2026;89;2
+2;Giulia Gialli;1;Albero pericolante;04/08/2026;63;1
+3;Antonio Bianchi;3;Cartello stradale divelto;30/04/2026;80;0
+4;Luigi Rossi;3;Buca sul marciapiede;25/04/2026;24;0
+5;Antonio Verdi;1;Semaforo guasto;04/09/2026;37;2
+6;Francesca Rossi;3;Buca sul marciapiede;04/06/2026;14;0
+7;Matteo Greco;1;Rifiuti abbandonati;25/03/2026;79;0
+8;Francesca Colombo;2;Buca sul marciapiede;14/07/2026;93;1
+9;Antonio Colombo;1;Tombino ostruito;25/07/2026;29;1
+10;Francesca Gallo;1;Lampione;11/03/2026;91;2

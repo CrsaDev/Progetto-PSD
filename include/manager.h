@@ -1,7 +1,7 @@
 #ifndef manager_H
 #define manager_H
 
-#include "dyn_arr.h"
+#include "dir_table.h"
 #include "p_queue.h"
 
 typedef struct c_manager *manager;
@@ -17,7 +17,7 @@ void manager_destroy(manager m);
 /* --- Queries --- */
 
 /* Returns the number of reports contained in the manager */
-int manager_get_size(manager m);
+int manager_get_max_id(manager m);
 
 /* Inserts a report in the manager. Returns 1 if the operation was successful and 0 if not  */
 int manager_add_report(manager m, report r);

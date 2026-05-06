@@ -1,1 +1,1 @@
-3 Luigi_Verdi 1 Lampione_guasto 01/01/2026 0 1
+3;Antonio Bianchi;3;Cartello stradale divelto;30/04/2026;80;0

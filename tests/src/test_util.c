@@ -1,30 +1,33 @@
 #include "test_util.h"
 #include <stdio.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 FILE* fopen_at_line(const char *fname, int hop) {
     FILE *f = fopen(fname, "r");
-    if (f == NULL) {
+    if (!f) {
         printf("Attenzione: Impossibile aprire il file %s\n", fname);
         return NULL;
     }
 
-    // Jumps n lines
+    char buffer[256]; // Temp buffer for lines
     for (int i = 0; i < hop; i++) {
-        if (fscanf(f, "%*[^\n]") == EOF) { // Loops until end of file, for \n
-            fclose(f); 
+        // check if NULL isreturned before hops
+        if (fgets(buffer, sizeof(buffer), f) == NULL) {
+            fclose(f);
             return NULL;
         }
-        fgetc(f); // Consumes \n
     }
 
-    return f; // Returns pointer to the file at proper position
+    return f; 
 }
 
-dynArr finput_list(char *fname, int hop) {
+dirTable finput_dirTable(char *fname, int hop) {
     FILE *f = fopen_at_line(fname, hop);
     if (f == NULL) return NULL;
 
-    dynArr tmp = dynArr_create();
+    dirTable tmp = dirTable_create();
     if (tmp == NULL) { 
         fclose(f); 
         return NULL; 
@@ -35,8 +38,7 @@ dynArr finput_list(char *fname, int hop) {
     char line[256];
 
     while (fgets(line, sizeof(line), f)) {
-        // sscanf returns the fields
-        if (sscanf(line, "%d %49s %d %99s %d/%d/%d %d %d", 
+        if (sscanf(line, "%d;%49[^;];%d;%99[^;];%d/%d/%d;%d;%d", 
                    &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
             
             date dt = date_create(day, month, year);
@@ -45,9 +47,10 @@ dynArr finput_list(char *fname, int hop) {
             report r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
             
             if (r != NULL) {
-                if (!dynArr_add(tmp, r)) {
-                    report_destroy(r); 
-                    break;
+                // Tenta l'inserimento
+                if (!dirTable_add(tmp, r)) {
+                    report_destroy(r); // Aviods memory leaks
+                    continue; // Skips to next line
                 }
             } else {
                 date_destroy(dt); 
@@ -59,7 +62,7 @@ dynArr finput_list(char *fname, int hop) {
     return tmp;
 }
 
-int foutput_list(char *fname, dynArr l) {
+int foutput_list(char *fname, dirTable l) {
     FILE *f = fopen(fname, "w");
     if (f == NULL) {
         printf("Attenzione: Impossibile creare il file %s\n", fname);
@@ -67,8 +70,8 @@ int foutput_list(char *fname, dynArr l) {
     }
 
     // Printing list to the file
-    if (!dynArr_is_empty(l)) {
-        dynArr_print_file(l, f); 
+    if (!dirTable_is_empty(l)) {
+        dirTable_print_file(l, f); 
     }
 
     fclose(f);
@@ -100,4 +103,51 @@ int read_int(const char *fname, int hop) {
     fclose(f);
 
     return val;
+}
+
+report read_report(const char *fname, int hop) {
+    FILE *f = fopen_at_line(fname, hop);
+    if (f == NULL) return NULL;
+
+    int id, day, month, year, cat, prio, stat;
+    char citizen[50], desc[100];
+    char line[256];
+    report r = NULL;
+
+    // Reads a single line
+    if (fgets(line, sizeof(line), f)) {
+        if (sscanf(line, "%d;%49[^;];%d;%99[^;];%d/%d/%d;%d;%d", 
+                   &id, citizen, &cat, desc, &day, &month, &year, &prio, &stat) == 9) {
+            
+            date dt = date_create(day, month, year);
+            if (dt != NULL) {
+                r = report_create(id, citizen, (category)cat, desc, dt, prio, (status)stat);
+                
+                if (r == NULL) {
+                    date_destroy(dt); 
+                }
+            }
+        }
+    }
+
+    fclose(f);
+    return r;
+}
+
+int write_report(const char *fname, report r) {
+    FILE *f = fopen(fname, "w");
+    if (f == NULL) {
+        printf("Attenzione: Impossibile creare il file %s\n", fname);
+        return 0;
+    }
+
+    char *report = report_file_string(r);
+    
+    if (report != NULL) {
+        fprintf(f, "%s\n", report);
+        free(report); // Freeing for memory
+    }
+
+    fclose(f);
+    return 1;
 }

@@ -1,1 +1,1 @@
-10 Luigi_Verdi 1 Lampione 01/01/2026 -1 0
+1;Mario Marino;0;Semaforo guasto;07/07/2026;89;1

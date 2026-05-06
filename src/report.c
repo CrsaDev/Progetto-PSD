@@ -183,19 +183,26 @@ report report_input(int last_index) {
 void report_formatted(report r) {
     if (!r) return;
 
-    printf("%d\t%s\t%s\t%s\t", r->id, r->citizen,
-           category_to_string(r->cat), r->description);
+    // Used to allign text
+    printf("%-4d | %-20s | %-18s | %-25s | ", 
+           r->id, 
+           r->citizen,
+           category_to_string(r->cat), 
+           r->description);
 
-    date_print(r->d);  // prints in DD/MM/YYYY format
-    printf("\t%s\tPriority:%d\n", status_to_string(r->stat), r->prio);
+    date_print(r->d);  
+    
+    printf(" | %-12s | Priority: %-3d\n", 
+           status_to_string(r->stat), 
+           r->prio);
 }
 
 char* report_file_string(report r) {
     if (!r) return NULL;
     
     // Checks the size to allocate for the string
-    int record_size = snprintf(NULL,0, "%d %s %d %s %02d/%02d/%d %d %d", 
-        r->id, r->citizen,r->cat, r->description,
+    int record_size = snprintf(NULL, 0, "%d;%s;%d;%s;%02d/%02d/%d;%d;%d", 
+        r->id, r->citizen, r->cat, r->description,
         date_day(r->d), date_month(r->d), date_year(r->d),
         r->prio, r->stat
     );
@@ -203,9 +210,11 @@ char* report_file_string(report r) {
     if(record_size < 0) return NULL;
 
     // Allocates the string
-    char *s = malloc((record_size+1) * sizeof(char));
+    char *s = malloc((record_size + 1) * sizeof(char));
     if(!s) return NULL;
-    sprintf(s, "%d %s %d %s %02d/%02d/%d %d %d", 
+
+    // Writes into the string with the delimiters
+    sprintf(s, "%d;%s;%d;%s;%02d/%02d/%d;%d;%d", 
         r->id, r->citizen, r->cat, r->description,
         date_day(r->d), date_month(r->d), date_year(r->d),
         r->prio, r->stat
