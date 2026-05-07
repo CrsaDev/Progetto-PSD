@@ -154,7 +154,7 @@ void manager_update_report_status(manager m, int report_id, status new_status) {
 
 void manager_find_report(manager m, int report_id) {
     if (!m) return;
-    if(report_id <= 0 || report_id > dirTable_get_size(m->manager_list)) {
+    if(report_id < 0 || report_id > dirTable_get_size(m->manager_list)) {
         printf("Report con ID %d inesistente.\n", report_id);
         return;
     }

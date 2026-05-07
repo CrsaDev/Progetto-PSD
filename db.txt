@@ -1,3 +1,4 @@
+0;Test case;0;Testing;07/07/2026;89;2
 1;Mario Marino;0;Semaforo guasto;07/07/2026;89;2
 2;Giulia Gialli;1;Albero pericolante;04/08/2026;63;2
 3;Antonio Bianchi;3;Cartello stradale divelto;30/04/2026;80;0
