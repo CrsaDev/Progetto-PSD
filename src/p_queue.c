@@ -86,7 +86,7 @@ static void down(pQueue q, int i) {
 static void clean_resolved(pQueue q) {
     if (!q) return;
 
-    // Keep looging as long as there are elements, and the top is "RESOLVED"
+    // Keep looping as long as there are elements, and the top is "RESOLVED"
     while (q->num_el > 0 && report_status(q->queue[1]) == RESOLVED) {
         
         // Deleting the root
